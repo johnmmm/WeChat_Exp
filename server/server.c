@@ -14,9 +14,28 @@
 #include <arpa/inet.h>
 
 #define SIN_PORT 7474
-#define BACKLOG 20
+#define BACKLOG 40
 #define MAX_DATA_SIZE 4096
-#define MAX_NUM 20
+#define MAX_NUM 40
+
+//need to define those types of message!
+#define REGISTER 1
+#define LOGIN 2
+#define HELP 3
+#define CHAT_REQUEST 4
+#define CHAT_MESSAGE 5
+#define ASK_FRIEND_LIST 6
+#define FILE_MESSAGE 7
+#define UNKNOWN 8
+
+//the type of message to return
+#define EXCEED 20
+#define SUCCESS 21
+#define FAILED 22
+#define USERNAME_UNAVAILABLE 23
+#define WRONG_USERNAME 24
+#define WRONG_PASSWORD 25
+#define ALREADY_ONLINE 26
 
 struct Users
 {
@@ -131,18 +150,19 @@ int main (int argc, char *argv[])
                 printf("success to accept!! \n");
                 printf(">>>>>> %s:%d join in! ID(fd):%d \n",inet_ntoa(clientSockaddr.sin_addr),ntohs(clientSockaddr.sin_port),recefd);
 
-                int receSize = recv(recefd, &user, sizeof(struct Users), 0);
+
+                int receSize = recv(recefd, receBuf, MAX_DATA_SIZE, 0);
                 if(receSize == -1 || receSize == 0)
                 {
                     perror(" failed to gain data from client!!!\n");
                     exit(1);
                 }
-                printf("username: %s, password: %s", user.username, user.password);
+                printf("username: %s, password: %s\n", receBuf, "miao");
                 printf("Success! \n");
                 strcpy(sendBuf,"yes");
                 
                 memset(receBuf, 0, sizeof(receBuf));
-                int sendSize = send(recefd, sendBuf, MAX_DATA_SIZE, 0);
+                int sendSize = send(recefd, sendBuf, 3, 0);
                 if(sendSize == -1 || sendSize == 0)
                 {
                     perror(" failed to send!!!\n");
