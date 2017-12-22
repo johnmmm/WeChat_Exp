@@ -12,6 +12,7 @@
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #define SIN_PORT 7474
 #define BACKLOG 40
@@ -36,7 +37,8 @@
 #define WRONG_USERNAME 24
 #define WRONG_PASSWORD 25
 #define ALREADY_ONLINE 26
-#define MESSAGE_SELF 27
+
+void* handle_message(int *fd);
 
 struct Users
 {
@@ -52,10 +54,11 @@ int main (int argc, char *argv[])
     char username[32];                                  //username for server
     struct timeval timeout;                             //for refreshing
     socklen_t sin_size = 0;
+    pthread_t client_thread;
     fd_set serverfd, clientfd;                          //for ids of server and client
     int client_num = 0;                                 //for counting number of client
-    int server_sockfd[BACKLOG+1];                       //for saving the sockfds of server
-    char client_name[BACKLOG+1][32];                    //for saving names of clients
+    int server_sockfd[FD_SETSIZE+1];                    //for saving the sockfds of server
+    char client_name[FD_SETSIZE+1][32];                 //for saving names of clients
     struct Users user;                                  //for recording user's information
     char sendBuf[MAX_DATA_SIZE], receBuf[MAX_DATA_SIZE];//for buffers 
     int on = 1;                                         //???
@@ -75,15 +78,10 @@ int main (int argc, char *argv[])
         exit(1);
     }
     printf("success to build a socket!!!\n");
-
-    setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(on));
-
-    serverSockaddr.sin_family = AF_INET;
-    //serverSockaddr.sin_port = SIN_PORT;                 //configure my_addr
+                                                        //configure my_addr
+    setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(on));               
     serverSockaddr.sin_port = htons(SIN_PORT);
-    //serverSockaddr.sin_addr.s_addr = INADDR_ANY;
     serverSockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    bzero(&(serverSockaddr.sin_zero),8);
                                                         //bind it
     int bind_ans = bind(sockfd, (struct sockaddr*)&serverSockaddr, sizeof(struct sockaddr));
     if(bind_ans == -1)
@@ -114,17 +112,18 @@ int main (int argc, char *argv[])
     max_sockfd = sockfd;
     max_recefd = 0;
 
-    memset(server_sockfd, 0, sizeof(server_sockfd));
+    memset(server_sockfd, -1, sizeof(server_sockfd));
     memset(client_name, 0, sizeof(client_name));
 
     int select_num = 0;
     while(1)
     {
-        FD_ZERO(&serverfd);                                 //clean it 
-        FD_ZERO(&clientfd);
-        FD_SET(sockfd, &serverfd);
+        // FD_ZERO(&serverfd);                          //clean it 
+        // FD_ZERO(&clientfd);
+        // FD_SET(sockfd, &serverfd);
+        clientfd = serverfd;
         
-        select_num = select(max_sockfd+1, &serverfd, NULL, NULL, &timeout);
+        select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
         //printf("select_num: %d\n", select_num);
         if(select_num == -1)
         {
@@ -140,7 +139,7 @@ int main (int argc, char *argv[])
         else
         {
             printf("else!!\n");
-            if(FD_ISSET(sockfd, &serverfd))             //if there is something to 
+            if(FD_ISSET(sockfd, &clientfd))             //if there is something to 
             {
                 recefd = accept(sockfd, (struct sockaddr*)&clientSockaddr, &sin_size);
                 if(recefd == -1)                        //accept it
@@ -152,57 +151,84 @@ int main (int argc, char *argv[])
                 printf(">>>>>> %s:%d join in! ID(fd):%d \n",inet_ntoa(clientSockaddr.sin_addr),ntohs(clientSockaddr.sin_port),recefd);
 
 
-                int receSize = recv(recefd, receBuf, MAX_DATA_SIZE, 0);
-                if(receSize == -1 || receSize == 0)
+                // int receSize = recv(recefd, receBuf, MAX_DATA_SIZE, 0);
+                // if(receSize == -1 || receSize == 0)
+                // {
+                //     perror(" failed to gain data from client!!!\n");
+                //     exit(1);
+                // }
+                // printf("username: %s, password: %s\n", receBuf, "miao");
+                // printf("Success! \n");
+                // strcpy(sendBuf,"yes");
+                
+                // memset(receBuf, 0, sizeof(receBuf));
+                // int sendSize = send(recefd, sendBuf, 3, 0);
+                // if(sendSize == -1 || sendSize == 0)
+                // {
+                //     perror(" failed to send!!!\n");
+                // }
+                // server_sockfd[client_num] = recefd;
+                // strcpy(client_name[client_num], user.username);
+                // client_num++;
+                // max_recefd = recefd;
+
+                //ready to handle all those message
+                int i = 0;
+                for(i = 0; i < FD_SETSIZE; i++)
                 {
-                    perror(" failed to gain data from client!!!\n");
+                    if(server_sockfd[i] < 0)
+                    {
+                        server_sockfd[i] = recefd;
+                        break;
+                    }
+                }
+
+                if(i == FD_SETSIZE)
+                {
+                    perror("here are too many connnections!!\n");
                     exit(1);
                 }
-                printf("username: %s, password: %s\n", receBuf, "miao");
-                printf("Success! \n");
-                strcpy(sendBuf,"yes");
-                
-                memset(receBuf, 0, sizeof(receBuf));
-                int sendSize = send(recefd, sendBuf, 3, 0);
-                if(sendSize == -1 || sendSize == 0)
-                {
-                    perror(" failed to send!!!\n");
-                }
-                server_sockfd[client_num] = recefd;
-                strcpy(client_name[client_num], user.username);
-                client_num++;
-                max_recefd = recefd;
+
+                //put num in accept into serverfd to say that it is going to be handled
+                FD_SET(recefd, &serverfd);
+
+                //refresh the max one
+                if(recefd > max_recefd)
+                    max_recefd = recefd;
+                if(i > max_recefd)
+                    max_recefd = i;
+                printf("finish refreshing!!!\n");
+                //maybe there is a problem about select_num
+                //cannot understand function select very well now..
             }
         }
 
-        for(int i = 0; i < MAX_NUM; i++)
+        //and then we handle all those sockets
+        for(int i = 0; i <= max_recefd; i++)
         {
-            if(server_sockfd[i] != 0)
+            int tmp_fd = 0;
+            printf("now handle No.%d\n", i);
+            if((tmp_fd = server_sockfd[i]) < 0)
             {
-                FD_SET(server_sockfd[i], &clientfd);
+                continue;
             }
-        }
 
-        select_num = select(max_recefd+1, &clientfd, NULL, NULL, &timeout);
-        if(select_num == -1)
-        {
-            continue;
-        }
-        else if(select_num == 0)
-        {
-            continue;
-        }
-        else
-        {
-            for(int i = 0; i < client_num; i++)
+            if(FD_ISSET(tmp_fd, &clientfd))
             {
-                if(FD_ISSET(recefd, &clientfd))
-                {
-
-                }
+                //if??
+                pthread_create(&client_thread, NULL, (void *)handle_message, (void*)&sockfd);
             }
+
+            FD_CLR(tmp_fd, &serverfd);
+            server_sockfd[i] = -1;
         }
     }
 
+    //close(sockfd);
     return 0;
+}
+
+void* handle_message(int *fd)
+{
+    return NULL;
 }

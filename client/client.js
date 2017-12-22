@@ -1,8 +1,15 @@
 var net = require('net');
 var fs = require("fs");
+var readline = require('readline');
 
 var HOST = '127.0.0.1';
 var PORT = 7474;
+
+//创建readline接口实例
+var rl = readline.createInterface({
+    input:process.stdin,
+    output:process.stdout
+});
 
 var client = new net.Socket();
 client.connect(PORT, HOST, function() {
@@ -32,19 +39,11 @@ client.on('error',function(error){
 // 为客户端添加“close”事件处理函数
 client.on('close', function() {
     console.log('Connection closed');
+    rl.close();
 });
 
 client.on('message', function(message){
     console.log('message: ' + message);
-});
-
-
-var readline = require('readline');
-
-//创建readline接口实例
-var rl = readline.createInterface({
-    input:process.stdin,
-    output:process.stdout
 });
 
 //得到键盘输入
@@ -59,6 +58,10 @@ rl.on('line', function(line){
             break;
         case 'help':
             console.log('help: you can ... ');
+            break;
+        case 'send':
+            console.log('send a file?')
+            break;
         case 'close':
             rl.close();
             break;
