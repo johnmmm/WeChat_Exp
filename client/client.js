@@ -4,37 +4,6 @@ var fs = require("fs");
 var HOST = '127.0.0.1';
 var PORT = 7474;
 
-var readline = require('readline');
-
-//创建readline接口实例
-var rl = readline.createInterface({
-    input:process.stdin,
-    output:process.stdout
-});
-
-rl.on('line', function(line){
-    switch(line.trim()) {
-        case 'copy':
-            console.log("复制");
-            break;
-        case 'hello':
-            rl.write("Write");
-            console.log('world!');
-            break;
-        case 'close':
-            rl.close();
-            break;
-        default:
-            console.log('没有找到命令！');
-            break;
-    }
-});
-
-rl.on('close', function() {
-    console.log('bye bye');
-    process.exit(0);
-});
-
 var client = new net.Socket();
 client.connect(PORT, HOST, function() {
 
@@ -54,6 +23,12 @@ client.on('data', function(data) {
 
 });
 
+//"error"处理
+client.on('error',function(error){
+    console.log('error:'+error);
+    client.destory();
+});
+
 // 为客户端添加“close”事件处理函数
 client.on('close', function() {
     console.log('Connection closed');
@@ -64,3 +39,36 @@ client.on('message', function(message){
 });
 
 
+var readline = require('readline');
+
+//创建readline接口实例
+var rl = readline.createInterface({
+    input:process.stdin,
+    output:process.stdout
+});
+
+//得到键盘输入
+rl.on('line', function(line){
+    var readin = line.trim()
+    switch(readin) {
+        case 'copy':
+            console.log("复制");
+            break;
+        case 'hello':
+            console.log('world!');
+            break;
+        case 'help':
+            console.log('help: you can ... ');
+        case 'close':
+            rl.close();
+            break;
+        default:
+            console.log('没有找到命令！');
+            break;
+    }
+});
+
+rl.on('close', function() {
+    console.log('bye bye');
+    process.exit(0);
+});

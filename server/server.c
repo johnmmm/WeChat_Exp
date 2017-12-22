@@ -36,6 +36,7 @@
 #define WRONG_USERNAME 24
 #define WRONG_PASSWORD 25
 #define ALREADY_ONLINE 26
+#define MESSAGE_SELF 27
 
 struct Users
 {
