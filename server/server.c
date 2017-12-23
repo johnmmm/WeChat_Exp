@@ -24,7 +24,8 @@ int main (int argc, char *argv[])
     int on = 1;                                         //???
 
     readTxt(username);
-    //refreshTxt(username);
+    memset(user_login, 0, USERNUM);
+    memset(user_socket, 0, USERNUM);
 
     if(argc != 2)                                       //command does not have right format
     {
@@ -85,6 +86,7 @@ int main (int argc, char *argv[])
         //printf("begin to ...\n");
         select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
         printf("select_num: %d\n", select_num);
+        printf("user 0 : %d, user 1 : %d \n", user_login[0], user_login[1]);
         //printf("select_num: %d\n", select_num);
         if(select_num == -1)
         {

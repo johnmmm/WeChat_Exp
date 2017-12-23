@@ -39,16 +39,19 @@
 
 //the type of message to return
 #define EXCEED "exceed"
-#define SUCCESS "success"
+#define SUCCESS "C"
 #define FAILED "failed"
 #define USERNAME_UNAVAILABLE "U"
 #define LOGIN_SUCCESS "S"
 #define WRONG_USERNAME "E"
 #define WRONG_PASSWORD "P"
-#define ALREADY_ONLINE "already_online"
+#define ALREADY_LOGIN "A"               //cannot be login in in another shell
 #define NOT_FRIEND "not_friend"
 #define ALREADY_FRIEND "already_friend"
 #define USERS_FULL "F"
+#define NOT_LOGIN "N"
+#define NOT_ONLINE "O"                  //target person is not online
+#define FAKE_PERSON "K"
 
 typedef struct _User                    //To record those users
 {
@@ -71,6 +74,8 @@ typedef struct _ListNode
 }ListNode;
 
 int user_num;
+int user_login[USERNUM];
+int user_socket[USERNUM];
 User users[USERNUM];
 ListNode *userlist;              //record the user who are online
 

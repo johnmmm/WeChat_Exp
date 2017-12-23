@@ -25,12 +25,21 @@ client.connect(PORT, HOST, function() {
 client.on('data', function(data) {
     //var backdata = data.trim()
     var arr = data.toString().split(" ")
+    var success = "C"
     var username_unavailable = "U"
     var login_success = "S"
     var wrong_username = "E";
     var wrong_password = "P";
+    var already_login = "A";
     var users_full = "F"
+    var not_login = "N"
+    var not_online = "O"
+    var fake_person = "K"
     switch(arr[0][0]){
+        case success[0]:
+            console.log('User: ' + arr[1] + ' send you a message: ')
+            console.log(arr[2])
+            break
         case username_unavailable[0]:
             console.log('This username is not available, please choose another one.');
             break;
@@ -43,8 +52,20 @@ client.on('data', function(data) {
         case wrong_password[0]:
             console.log('Wrong password!!!');
             break;
+        case already_login[0]:
+            console.log('Failed! You have already been online!!!');
+            break;
         case users_full[0]:
             console.log('There are too many users!!!');
+            break;
+        case not_login[0]:
+            console.log('You have not been online, please sign in first!!!')
+            break;
+        case not_online[0]:
+            console.log("Target is not online now, please try later~")
+            break;
+        case fake_person[0]:
+            console.log('You are sending message to a fake person!!!')
             break;
         default:
             console.log('DATA: ' + arr[0] + '??' + arr.length);
