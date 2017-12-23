@@ -5,10 +5,12 @@ void* handleRequest(int *fd)
     printf("begin to handle!!\n");
     int tmp_fd, ret;
     tmp_fd = *fd;
+    char message_to_send[MAX_DATA_SIZE];
     printf("tmp_fd: %d\n", tmp_fd);
 
     char buf[MAX_LINE];
     memset(buf, 0, MAX_LINE);
+    memset(message_to_send, 0, MAX_DATA_SIZE);
     
     while(1)
     {
@@ -43,6 +45,39 @@ void* handleRequest(int *fd)
             {
                 case REGISTER:
                     printf("wang to regist!\n");
+                    printf("user exist: %s\n", users[0].userName);
+                    printf("username: %s\n", input[1]);
+                    printf("password: %s\n", input[2]);
+                    int flag = 0;
+                    int new_user = -1;
+                    for(int i = 0; i < USERNUM; i++)
+                    {
+                        if(users[i].userName[0] == 0)   //no username
+                        {
+                            new_user = i;
+                            break;
+                        }
+                        if(strcmp(users[i].userName, input[1]) == 0)
+                        {
+                            flag = 1;
+                            break;
+                        }
+                    }
+                    if(flag == 1)
+                    {
+                        //already exists!
+                        printf("username_unavailable\n");
+                        strcpy(message_to_send, USERNAME_UNAVAILABLE);
+                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                    }
+                    else if(flag == 0)
+                    {
+                        if(new_user == -1)              //full
+                        {
+
+                        }
+                        refreshTxt();
+                    }
                     break;
                 case LOGIN:
                     printf("username: %s\n", input[1]);

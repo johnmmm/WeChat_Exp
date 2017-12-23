@@ -2,7 +2,7 @@
 
 //we save the informations of users here
 
-void readTxt(char username[32])
+void readTxt()
 {
     FILE* stream;
     if((stream = fopen(FILE_URL, "r+")) == NULL)
@@ -14,7 +14,6 @@ void readTxt(char username[32])
     char buf[bufN];
     char *p = buf;
     fread(buf, 1, bufN, stream);
-    //printf("text content: %s\n", buf);
 
     memset(users, 0, sizeof(users));
 
@@ -48,14 +47,14 @@ void readTxt(char username[32])
         }
     }
     printf("finishing reading!!\n");
-    printf("the first username: %s\n", users[0].userName);
-    printf("the first password: %s\n", users[0].password);
-    printf("the first friend: %s\n", users[0].friend_list[0]);
+    // printf("the first username: %s\n", users[0].userName);
+    // printf("the first password: %s\n", users[0].password);
+    // printf("the first friend: %s\n", users[0].friend_list[0]);
 
     return;
 }
 
-void refreshTxt(char username[32])
+void refreshTxt()
 {
     FILE* stream;
     if((stream = fopen(FILE_URL, "w+")) == NULL)
@@ -102,7 +101,7 @@ void refreshTxt(char username[32])
             }
         }
     }
-    printf("data is like this: %s\n", buf);
+    //printf("data is like this: %s\n", buf);
     fwrite(buf, 1, bufN, stream);
     printf("put data into files\n");
 

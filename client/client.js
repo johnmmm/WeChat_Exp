@@ -23,8 +23,17 @@ client.connect(PORT, HOST, function() {
 // 为客户端添加“data”事件处理函数
 // data是服务器发回的数据
 client.on('data', function(data) {
-
-    console.log('DATA: ' + data);
+    //var backdata = data.trim()
+    var arr = data.toString().split(" ")
+    var unavailable = "U"
+    switch(arr[0][0]){
+        case unavailable[0]:
+            console.log('This username is not available, please choose another one.');
+            break;
+        default:
+            console.log('DATA: ' + arr[0] + '??' + arr.length);
+            break;
+    }
     // 完全关闭连接
     //client.destroy();
 
@@ -49,12 +58,25 @@ rl.on('line', function(line){
     switch(arr[0]) {
         case 'help':
             console.log('help: you can ... ');
+            console.log('register [username] [password]     -To register')
             console.log('login [username] [password] 		—To login');
             console.log('logout           				    —To log out');
             console.log('send [send_to_username] [content] 	—To send a message to a friend');
             console.log('help						        —To help');
             console.log('check					            —To check all your friends');
             console.log('checkonline					    —To get all your online friends');
+            break;
+        case 'register':
+            if(arr.length == 3)
+            {
+                console.log('ready to register~');
+                client.write('R' + ' ' + arr[1] + ' ' + arr[2]);
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: register [username] [password]');
+            }
             break;
         case 'login':
             if(arr.length == 3)

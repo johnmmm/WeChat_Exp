@@ -19,7 +19,7 @@
 
 #define SIN_PORT 7474
 #define BACKLOG 40
-#define MAX_DATA_SIZE 4096
+#define MAX_DATA_SIZE 40960
 #define MAX_NUM 40
 #define MAX_LINE  8192
 #define FRIENDNUM 10
@@ -38,13 +38,16 @@
 #define UNKNOWN 'U'
 
 //the type of message to return
-#define EXCEED 20
-#define SUCCESS 21
-#define FAILED 22
-#define USERNAME_UNAVAILABLE 23
-#define WRONG_USERNAME 24
-#define WRONG_PASSWORD 25
-#define ALREADY_ONLINE 26
+#define EXCEED "exceed"
+#define SUCCESS "success"
+#define FAILED "failed"
+#define USERNAME_UNAVAILABLE "U"
+#define WRONG_USERNAME "wrong_username"
+#define WRONG_PASSWORD "wrong_password"
+#define ALREADY_ONLINE "already_online"
+#define NOT_FRIEND "not_friend"
+#define ALREADY_FRIEND "already_friend"
+#define USERS_FULL "users_full"
 
 typedef struct _User                    //To record those users
 {
@@ -74,5 +77,5 @@ ListNode *userlist;              //record the user who are online
 extern void* handleRequest(int *fd);
 
 //info.c
-extern void readTxt(char username[32]);
-extern void refreshTxt(char username[32]);
+extern void readTxt();
+extern void refreshTxt();
