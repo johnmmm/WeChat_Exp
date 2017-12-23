@@ -8,8 +8,6 @@ struct Users
 
 int main (int argc, char *argv[])
 {
-    readTxt();
-    
     struct sockaddr_in serverSockaddr,clientSockaddr;   //for addr
     int sockfd, recefd;                                 //for socket symbol
     int max_sockfd = 0, max_recefd = 0;                 //for max
@@ -24,6 +22,9 @@ int main (int argc, char *argv[])
     struct Users user;                                  //for recording user's information
     char sendBuf[MAX_DATA_SIZE], receBuf[MAX_DATA_SIZE];//for buffers 
     int on = 1;                                         //???
+
+    readTxt(username);
+    //refreshTxt(username);
 
     if(argc != 2)                                       //command does not have right format
     {
