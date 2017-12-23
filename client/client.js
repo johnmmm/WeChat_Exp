@@ -63,6 +63,10 @@ rl.on('line', function(line){
             console.log('send a file?')
             client.write('send something!');
             break;
+        case 'logout':
+            console.log('ready to logout');
+            client.write('o $%^&*()');
+            break;
         case 'close':
             rl.close();
             break;

@@ -258,18 +258,26 @@ void* handleRequest(int *fd)
     {
         int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
         printf("begin %d\n", rece_num);
-        if(rece_num < 0)
+        if(rece_num <= 0)
         {
-            // fflush(stdout);
-            // close(stdout);
-            //*fd = -1;
+            fflush(stdout);
+            close(stdout);
+            *fd = -1;
             printf("logout~~ \n");
-            //return NULL;
+            return NULL;
         }
         else
         {
-            printf("message: %s\n", buf);
+            if(buf[0] == 'o')
+            {
+                printf("logout~~ \n");
+                *fd = -1;
+                return NULL;
+            }
+            else
+                printf("message: %s\n", buf);
         }
+        memset(buf, 0, MAX_LINE);
     }
     *fd = -1;
     return NULL;
