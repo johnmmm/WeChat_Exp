@@ -16,7 +16,7 @@ client.connect(PORT, HOST, function() {
 
     console.log('CONNECTED TO: ' + HOST + ':' + PORT);
     // 建立连接后立即向服务器发送数据，服务器将收到这些数据 
-    client.write('chuimaoyu chuimaoyu');
+    client.write('connect! good!');
 
 });
 
@@ -42,37 +42,58 @@ client.on('close', function() {
     rl.close();
 });
 
-client.on('message', function(message){
-    console.log('message: ' + message);
-});
-
 //得到键盘输入
 rl.on('line', function(line){
     var readin = line.trim()
-    switch(readin) {
-        case 'copy':
-            console.log("复制");
-            break;
-        case 'hello':
-            console.log('world!');
-            break;
+    var arr = readin.split(" ")
+    switch(arr[0]) {
         case 'help':
             console.log('help: you can ... ');
+            console.log('login [username] [password] 		—To login');
+            console.log('logout           				    —To log out');
+            console.log('send [send_to_username] [content] 	—To send a message to a friend');
+            console.log('help						        —To help');
+            console.log('check					            —To check all your friends');
+            console.log('checkonline					    —To get all your online friends');
             break;
-        case 'send':
-            console.log('send a file?')
-            client.write('send something!');
+        case 'login':
+            if(arr.length == 3)
+            {
+                console.log('ready to login~');
+                client.write('L' + ' ' + arr[1] + ' ' + arr[2]);
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: login [username] [password]');
+            }
             break;
         case 'logout':
             console.log('ready to logout');
-            client.write('o $%^&*()');
+            client.write('O $%^&*()');
             rl.close();
             break;
-        case 'close':
-            rl.close();
+        case 'send':
+            if(arr.length == 3)
+            {
+                console.log('ready to send a message~');
+                client.write('M' + ' ' + arr[1] + ' ' + arr[2]);
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: send [send_to_username] [content]');
+            }
+            break;
+        case 'check':
+            client.write('A');
+            break;
+        case 'checkonline':
+            client.write('S');
             break;
         default:
             console.log('没有找到命令！');
+            console.log("use 'help' for help!")
             break;
     }
 });

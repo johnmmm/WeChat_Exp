@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <string.h>
 
 #define SIN_PORT 7474
 #define BACKLOG 40
@@ -21,14 +22,15 @@
 #define MAX_LINE  8192
 
 //need to define those types of message!
-#define REGISTER 1
-#define LOGIN 2
-#define HELP 3
-#define CHAT_REQUEST 4
-#define CHAT_MESSAGE 5
-#define ASK_FRIEND_LIST 6
-#define FILE_MESSAGE 7
-#define UNKNOWN 8
+#define REGISTER 'R'
+#define LOGIN 'L'
+#define HELP 'H'
+#define CHAT_MESSAGE 'M'
+#define ASK_FRIEND_LIST 'A'
+#define ASK_FRIEND_ONLINE 'S'
+#define FILE_MESSAGE 'F'
+#define LOGOUT 'O'
+#define UNKNOWN 'U'
 
 //the type of message to return
 #define EXCEED 20
