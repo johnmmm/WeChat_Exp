@@ -14,6 +14,7 @@ void* handleRequest(int *fd)
     
     while(1)
     {
+        memset(message_to_send, 0, MAX_DATA_SIZE);
         int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
         printf("begin %d\n", rece_num);
         if(rece_num <= 0)
@@ -65,7 +66,6 @@ void* handleRequest(int *fd)
                     }
                     if(flag == 1)
                     {
-                        //already exists!
                         printf("username_unavailable\n");
                         strcpy(message_to_send, USERNAME_UNAVAILABLE);
                         send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
@@ -74,14 +74,54 @@ void* handleRequest(int *fd)
                     {
                         if(new_user == -1)              //full
                         {
-
+                            printf("users full\n");
+                            strcpy(message_to_send, USERS_FULL);
+                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                         }
-                        refreshTxt();
+                        else
+                        {
+                            strcpy(users[new_user].userName, input[1]);
+                            strcpy(users[new_user].password, input[2]);
+                            refreshTxt();
+                        } 
                     }
                     break;
                 case LOGIN:
+                    printf("wat to login\n");
                     printf("username: %s\n", input[1]);
                     printf("password: %s\n", input[2]);
+                    flag = 0;
+                    int user_id = -1;
+                    for(int i = 0; i < USERNUM; i++)
+                    {
+                        if(strcmp(users[i].userName, input[1]) == 0)
+                        {
+                            flag = 1;
+                            user_id = i;
+                            break;
+                        }
+                    }
+                    if(flag == 1)
+                    {
+                        if(strcmp(users[user_id].password, input[2]) == 0)
+                        {
+                            printf("password is right!!!\n");
+                            strcpy(message_to_send, LOGIN_SUCCESS);
+                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        }
+                        else
+                        {
+                            printf("password is wrong!!!\n");
+                            strcpy(message_to_send, WRONG_PASSWORD);
+                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        }
+                    }
+                    else if(flag == 0)
+                    {
+                        printf("no such user!!\n");
+                        strcpy(message_to_send, WRONG_USERNAME);
+                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                    }
                     break;
                 case HELP:
                     printf("want to get help!\n");

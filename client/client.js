@@ -25,10 +25,26 @@ client.connect(PORT, HOST, function() {
 client.on('data', function(data) {
     //var backdata = data.trim()
     var arr = data.toString().split(" ")
-    var unavailable = "U"
+    var username_unavailable = "U"
+    var login_success = "S"
+    var wrong_username = "E";
+    var wrong_password = "P";
+    var users_full = "F"
     switch(arr[0][0]){
-        case unavailable[0]:
+        case username_unavailable[0]:
             console.log('This username is not available, please choose another one.');
+            break;
+        case login_success[0]:
+            console.log('Login success!!!');
+            break;
+        case wrong_username[0]:
+            console.log('Wrong username!!!');
+            break;
+        case wrong_password[0]:
+            console.log('Wrong password!!!');
+            break;
+        case users_full[0]:
+            console.log('There are too many users!!!');
             break;
         default:
             console.log('DATA: ' + arr[0] + '??' + arr.length);

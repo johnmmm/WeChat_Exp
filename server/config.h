@@ -42,12 +42,13 @@
 #define SUCCESS "success"
 #define FAILED "failed"
 #define USERNAME_UNAVAILABLE "U"
-#define WRONG_USERNAME "wrong_username"
-#define WRONG_PASSWORD "wrong_password"
+#define LOGIN_SUCCESS "S"
+#define WRONG_USERNAME "E"
+#define WRONG_PASSWORD "P"
 #define ALREADY_ONLINE "already_online"
 #define NOT_FRIEND "not_friend"
 #define ALREADY_FRIEND "already_friend"
-#define USERS_FULL "users_full"
+#define USERS_FULL "F"
 
 typedef struct _User                    //To record those users
 {
