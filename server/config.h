@@ -20,6 +20,7 @@
 #define MAX_DATA_SIZE 4096
 #define MAX_NUM 40
 #define MAX_LINE  8192
+#define bufN 9999
 
 //need to define those types of message!
 #define REGISTER 'R'
@@ -42,3 +43,4 @@
 #define ALREADY_ONLINE 26
 
 extern void* handleRequest(int *fd);
+extern void readTxt();

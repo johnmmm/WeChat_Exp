@@ -8,6 +8,8 @@ struct Users
 
 int main (int argc, char *argv[])
 {
+    readTxt();
+    
     struct sockaddr_in serverSockaddr,clientSockaddr;   //for addr
     int sockfd, recefd;                                 //for socket symbol
     int max_sockfd = 0, max_recefd = 0;                 //for max
