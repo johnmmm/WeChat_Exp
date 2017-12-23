@@ -18,6 +18,7 @@
 #define BACKLOG 40
 #define MAX_DATA_SIZE 4096
 #define MAX_NUM 40
+#define MAX_LINE  8192
 
 //need to define those types of message!
 #define REGISTER 1
@@ -38,7 +39,7 @@
 #define WRONG_PASSWORD 25
 #define ALREADY_ONLINE 26
 
-void* handle_message(int *fd);
+void* handleRequest(int *fd);
 
 struct Users
 {
@@ -122,8 +123,9 @@ int main (int argc, char *argv[])
         // FD_ZERO(&clientfd);
         // FD_SET(sockfd, &serverfd);
         clientfd = serverfd;
-        
+        //printf("begin to ...\n");
         select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
+        printf("select_num: %d\n", select_num);
         //printf("select_num: %d\n", select_num);
         if(select_num == -1)
         {
@@ -131,17 +133,18 @@ int main (int argc, char *argv[])
             //exit(1);
             continue;
         }
-        else if(select_num == 0)
-        {
-            //printf("select_num is 0!!\n");
-            continue;
-        }
+        // else if(select_num == 0)
+        // {
+        //     //printf("select_num is 0!!\n");
+        //     continue;
+        // }
         else
         {
-            printf("else!!\n");
+            printf("else!! %d\n", sockfd);
             if(FD_ISSET(sockfd, &clientfd))             //if there is something to 
             {
                 recefd = accept(sockfd, (struct sockaddr*)&clientSockaddr, &sin_size);
+                printf("????\n");
                 if(recefd == -1)                        //accept it
                 {
                     perror(" failed to accept!!!\n");
@@ -178,6 +181,7 @@ int main (int argc, char *argv[])
                 {
                     if(server_sockfd[i] < 0)
                     {
+                        printf("recefd %d is %d\n", i, recefd);
                         server_sockfd[i] = recefd;
                         break;
                     }
@@ -198,29 +202,41 @@ int main (int argc, char *argv[])
                 if(i > max_recefd)
                     max_recefd = i;
                 printf("finish refreshing!!!\n");
+                printf("the select num is %d\n", select_num);
+                if(--select_num <= 0)
+                    continue;
                 //maybe there is a problem about select_num
                 //cannot understand function select very well now..
+
             }
+            printf("???\n");
         }
 
         //and then we handle all those sockets
+        int tmp_fd = 0;
         for(int i = 0; i <= max_recefd; i++)
         {
-            int tmp_fd = 0;
-            printf("now handle No.%d\n", i);
-            if((tmp_fd = server_sockfd[i]) < 0)
+            printf("now handle No.%d, socket is %d\n", i, server_sockfd[i]);
+            if(server_sockfd[i] < 0)
             {
                 continue;
             }
-
-            if(FD_ISSET(tmp_fd, &clientfd))
+            tmp_fd = server_sockfd[i];
+            printf("can we handle it?\n");
+            if(FD_ISSET(tmp_fd, &serverfd))
             {
                 //if??
-                pthread_create(&client_thread, NULL, (void *)handle_message, (void*)&sockfd);
+                printf("can we create it?\n");
+                if(select_num < 0)
+                    break;
+                printf("begin to handle it. tmp_fd: %d\n", tmp_fd);
+                pthread_create(&client_thread, NULL, (void *)handleRequest, (void*)&tmp_fd);
+                printf("finish handling it. tmp_fd: %d\n", tmp_fd);
+                FD_CLR(tmp_fd, &serverfd);
+                server_sockfd[i] = -1;
             }
 
-            FD_CLR(tmp_fd, &serverfd);
-            server_sockfd[i] = -1;
+            
         }
     }
 
@@ -228,7 +244,33 @@ int main (int argc, char *argv[])
     return 0;
 }
 
-void* handle_message(int *fd)
+void* handleRequest(int *fd)
 {
+    printf("begin to handle!!\n");
+    int tmp_fd, ret;
+    tmp_fd = *fd;
+    printf("tmp_fd: %d\n", tmp_fd);
+
+    char buf[MAX_LINE];
+    memset(buf, 0, MAX_LINE);
+    
+    while(1)
+    {
+        int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
+        printf("begin %d\n", rece_num);
+        if(rece_num < 0)
+        {
+            // fflush(stdout);
+            // close(stdout);
+            //*fd = -1;
+            printf("logout~~ \n");
+            //return NULL;
+        }
+        else
+        {
+            printf("message: %s\n", buf);
+        }
+    }
+    *fd = -1;
     return NULL;
 }

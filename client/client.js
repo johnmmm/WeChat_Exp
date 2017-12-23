@@ -61,6 +61,7 @@ rl.on('line', function(line){
             break;
         case 'send':
             console.log('send a file?')
+            client.write('send something!');
             break;
         case 'close':
             rl.close();
