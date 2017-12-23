@@ -66,6 +66,7 @@ rl.on('line', function(line){
         case 'logout':
             console.log('ready to logout');
             client.write('o $%^&*()');
+            rl.close();
             break;
         case 'close':
             rl.close();

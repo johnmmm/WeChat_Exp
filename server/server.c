@@ -1,28 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/un.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <sys/select.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <pthread.h>
-
 #include "config.h"
-
-#define SIN_PORT 7474
-#define BACKLOG 40
-#define MAX_DATA_SIZE 4096
-#define MAX_NUM 40
-#define MAX_LINE  8192
-
-void* handleRequest(int *fd);
 
 struct Users
 {
@@ -102,9 +78,6 @@ int main (int argc, char *argv[])
     int select_num = 0;
     while(1)
     {
-        // FD_ZERO(&serverfd);                          //clean it 
-        // FD_ZERO(&clientfd);
-        // FD_SET(sockfd, &serverfd);
         clientfd = serverfd;
         //printf("begin to ...\n");
         select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
@@ -116,11 +89,10 @@ int main (int argc, char *argv[])
             //exit(1);
             continue;
         }
-        // else if(select_num == 0)
-        // {
-        //     //printf("select_num is 0!!\n");
-        //     continue;
-        // }
+        else if(select_num == 0)
+        {
+            printf("select_num is 0!!\n");
+        }
         else
         {
             printf("else!! %d\n", sockfd);
@@ -136,29 +108,6 @@ int main (int argc, char *argv[])
                 printf("success to accept!! \n");
                 printf(">>>>>> %s:%d join in! ID(fd):%d \n",inet_ntoa(clientSockaddr.sin_addr),ntohs(clientSockaddr.sin_port),recefd);
 
-
-                // int receSize = recv(recefd, receBuf, MAX_DATA_SIZE, 0);
-                // if(receSize == -1 || receSize == 0)
-                // {
-                //     perror(" failed to gain data from client!!!\n");
-                //     exit(1);
-                // }
-                // printf("username: %s, password: %s\n", receBuf, "miao");
-                // printf("Success! \n");
-                // strcpy(sendBuf,"yes");
-                
-                // memset(receBuf, 0, sizeof(receBuf));
-                // int sendSize = send(recefd, sendBuf, 3, 0);
-                // if(sendSize == -1 || sendSize == 0)
-                // {
-                //     perror(" failed to send!!!\n");
-                // }
-                // server_sockfd[client_num] = recefd;
-                // strcpy(client_name[client_num], user.username);
-                // client_num++;
-                // max_recefd = recefd;
-
-                //ready to handle all those message
                 int i = 0;
                 for(i = 0; i < FD_SETSIZE; i++)
                 {
@@ -190,16 +139,14 @@ int main (int argc, char *argv[])
                     continue;
                 //maybe there is a problem about select_num
                 //cannot understand function select very well now..
-
             }
-            printf("???\n");
         }
 
         //and then we handle all those sockets
         int tmp_fd = 0;
         for(int i = 0; i <= max_recefd; i++)
         {
-            printf("now handle No.%d, socket is %d\n", i, server_sockfd[i]);
+            //printf("now handle No.%d, socket is %d\n", i, server_sockfd[i]);
             if(server_sockfd[i] < 0)
             {
                 continue;
@@ -218,50 +165,7 @@ int main (int argc, char *argv[])
                 FD_CLR(tmp_fd, &serverfd);
                 server_sockfd[i] = -1;
             }
-
-            
         }
     }
-
-    //close(sockfd);
     return 0;
-}
-
-void* handleRequest(int *fd)
-{
-    printf("begin to handle!!\n");
-    int tmp_fd, ret;
-    tmp_fd = *fd;
-    printf("tmp_fd: %d\n", tmp_fd);
-
-    char buf[MAX_LINE];
-    memset(buf, 0, MAX_LINE);
-    
-    while(1)
-    {
-        int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
-        printf("begin %d\n", rece_num);
-        if(rece_num <= 0)
-        {
-            fflush(stdout);
-            //close(stdout);
-            *fd = -1;
-            printf("logout~~ \n");
-            return NULL;
-        }
-        else
-        {
-            if(buf[0] == 'o')
-            {
-                printf("logout~~ \n");
-                *fd = -1;
-                return NULL;
-            }
-            else
-                printf("message: %s\n", buf);
-        }
-        memset(buf, 0, MAX_LINE);
-    }
-    *fd = -1;
-    return NULL;
 }
