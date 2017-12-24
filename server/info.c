@@ -8,12 +8,27 @@ int searchUsername(char username[])
     {
         if(strcmp(users[i].userName, username) == 0)
         {
+            printf("in: %d\n", i);
             user_id = i;
             break;
         }
+        printf("%d\n", i);
     }
     return user_id;
     //if -1 then no such user; else if > 0 then it is the user_id
+}
+
+int is_friend(int user_id, int target_id)
+{
+    int flag = 0;
+    for(int i = 0; i < FRIENDNUM; i++)
+    {
+        if(strcmp(users[user_id].friend_list[i], users[target_id].userName) == 0)
+        {
+            flag = 1;
+        }
+    }
+    return flag;//if 0 then not friend else if 1 then is friend
 }
 
 //we save the informations of users here
@@ -79,9 +94,9 @@ void refreshTxt()
         return;
     }
 
-    strcpy(users[0].userName, "John_WJs");
-    strcpy(users[0].password, "John_WJs");
-    strcpy(users[0].friend_list[0], "damaoyu");
+    // strcpy(users[0].userName, "John_WJs");
+    // strcpy(users[0].password, "John_WJs");
+    // strcpy(users[0].friend_list[0], "damaoyu");
 
     char buf[bufN];
     char *p = buf;

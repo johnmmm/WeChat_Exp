@@ -31,10 +31,12 @@ client.on('data', function(data) {
     var wrong_username = "E";
     var wrong_password = "P";
     var already_login = "A";
+    var already_friend = "L"
     var users_full = "F"
     var not_login = "N"
     var not_online = "O"
     var fake_person = "K"
+    var new_friend = 'Q'
     switch(arr[0][0]){
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
@@ -55,6 +57,9 @@ client.on('data', function(data) {
         case already_login[0]:
             console.log('Failed! You have already been online!!!');
             break;
+        case already_friend[0]:
+            console.log('Failed! This user is already your friend!');
+            break;
         case users_full[0]:
             console.log('There are too many users!!!');
             break;
@@ -67,8 +72,11 @@ client.on('data', function(data) {
         case fake_person[0]:
             console.log('You are sending message to a fake person!!!')
             break;
+        case new_friend[0]:
+            console.log('User ' + arr[1] + ' want to be your friend!!!')
+            break;
         default:
-            console.log('DATA: ' + arr[0] + '??' + arr.length);
+            console.log(arr[0]);
             break;
     }
     // 完全关闭连接

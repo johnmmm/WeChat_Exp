@@ -48,11 +48,12 @@
 #define WRONG_PASSWORD "P"
 #define ALREADY_LOGIN "A"               //cannot be login in in another shell
 #define NOT_FRIEND "not_friend"
-#define ALREADY_FRIEND "already_friend"
+#define ALREADY_FRIEND "L"
 #define USERS_FULL "F"
 #define NOT_LOGIN "N"
 #define NOT_ONLINE "O"                  //target person is not online
 #define FAKE_PERSON "K"
+#define NEW_FRIEND "Q"
 
 typedef struct _User                    //To record those users
 {
@@ -85,5 +86,6 @@ extern void* handleRequest(int *fd);
 
 //info.c
 extern int searchUsername(char username[]);
+extern int is_friend(int user_id, int target_id);
 extern void readTxt();
 extern void refreshTxt();

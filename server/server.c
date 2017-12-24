@@ -164,9 +164,7 @@ int main (int argc, char *argv[])
                 printf("can we create it?\n");
                 if(select_num < 0)
                     break;
-                printf("begin to handle it. tmp_fd: %d\n", tmp_fd);
                 pthread_create(&client_thread, NULL, (void *)handleRequest, (void*)&tmp_fd);
-                printf("finish handling it. tmp_fd: %d\n", tmp_fd);
                 FD_CLR(tmp_fd, &serverfd);
                 server_sockfd[i] = -1;
             }

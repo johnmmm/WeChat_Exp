@@ -172,13 +172,12 @@ void* handleRequest(int *fd)
                             {
                                 message_to_send[place++] = input[2][i];
                             }
-                            send(user_socket[target_user] , message_to_send , sizeof(message_to_send) , 0);
+                            send(user_socket[target_user], message_to_send, sizeof(message_to_send), 0);
                         }
                     }
                     break;
                 case ASK_FRIEND_LIST:
                     printf("want to gain friends list!\n");
-                    target_user = searchUsername(input[1]);
                     //if(target_user)
                     break;
                 case ASK_FRIEND_ONLINE:
@@ -190,6 +189,69 @@ void* handleRequest(int *fd)
                     break;
                 case FRIEND_REQUEST:
                     printf("want to be friends\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        strcpy(message_to_send, NOT_LOGIN);
+                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        break;
+                    }
+                    printf("user right? %s\n", input[1]);
+                    int friend_id = searchUsername(input[1]);
+                    printf("friend_id: %d\n", friend_id);
+                    if(friend_id == -1)
+                    {
+                        printf("no such user!!!\n");
+                        strcpy(message_to_send, FAKE_PERSON);
+                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        break;
+                    }
+                    else if(friend_id >= 0)
+                    {
+                        printf("find it\n");
+                        int whether_friend = is_friend(who_am_i, friend_id);
+                        if(whether_friend == 0)
+                        {
+                            printf("not friend.\n");
+                            if(user_login[friend_id] == 0)//target is not online
+                            {
+                                strcpy(message_to_send, NOT_ONLINE);
+                                send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                                break;
+                            }
+
+                            flag = 0;
+                            for(int i = 0; i < FRIENDNUM; i++)
+                            {
+                                printf("user: %s\n", users[user_id].friend_list[i]);
+                                if(users[user_id].friend_list[i][0] == 0)
+                                {
+                                    flag = i;
+                                    break;
+                                }
+                            }
+                            printf("save it: %d\n", flag);
+                            printf("friend name: %s\n", users[friend_id].userName);
+                            strcpy(users[user_id].friend_list[flag], users[friend_id].userName);//jia de!!!!
+                            printf("finish save it: %s\n", users[user_id].friend_list[flag]);
+                            refreshTxt();
+                            strcpy(message_to_send, NEW_FRIEND);
+                            message_to_send[1] = 32;
+                            int place = 2;
+                            for(int i = 0; i < sizeof(input[1]); i++)
+                            {
+                                message_to_send[place++] = input[1][i];
+                            }
+                            send(user_socket[friend_id] , message_to_send , sizeof(message_to_send) , 0);
+                        }
+                        else if(whether_friend == 1)
+                        {
+                            printf("already friend.\n");
+                            strcpy(message_to_send, ALREADY_FRIEND);
+                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            break;
+                        }
+                    }
                     break;
                 case LOGOUT:
                     printf("logout~~ \n");
