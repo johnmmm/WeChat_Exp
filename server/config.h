@@ -34,6 +34,7 @@
 #define ASK_FRIEND_LIST 'A'
 #define ASK_FRIEND_ONLINE 'S'
 #define FILE_MESSAGE 'F'
+#define FRIEND_REQUEST 'Q'
 #define LOGOUT 'O'
 #define UNKNOWN 'U'
 
@@ -83,5 +84,6 @@ ListNode *userlist;              //record the user who are online
 extern void* handleRequest(int *fd);
 
 //info.c
+extern int searchUsername(char username[]);
 extern void readTxt();
 extern void refreshTxt();

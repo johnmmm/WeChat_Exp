@@ -1,5 +1,21 @@
 #include "config.h"
 
+//search users' information here
+int searchUsername(char username[])
+{
+    int user_id = -1;
+    for(int i = 0; i < USERNUM; i++)
+    {
+        if(strcmp(users[i].userName, username) == 0)
+        {
+            user_id = i;
+            break;
+        }
+    }
+    return user_id;
+    //if -1 then no such user; else if > 0 then it is the user_id
+}
+
 //we save the informations of users here
 
 void readTxt()

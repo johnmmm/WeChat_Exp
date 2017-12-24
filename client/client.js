@@ -92,6 +92,17 @@ client.on('close', function() {
 rl.on('line', function(line){
     var readin = line.trim()
     var arr = readin.split(" ")
+    var register = 'R'
+    var login = 'L'
+    var help = 'H'
+    var chat_message = 'M'
+    var ask_friend_list = 'A'
+    var ask_friend_online = 'S'
+    var file_message = 'F'
+    var friend_request = 'Q'
+    var logout = 'O'
+    var unknown = 'U'
+
     switch(arr[0]) {
         case 'help':
             console.log('help: you can ... ');
@@ -102,12 +113,13 @@ rl.on('line', function(line){
             console.log('help						        —To help');
             console.log('check					            —To check all your friends');
             console.log('checkonline					    —To get all your online friends');
+            console.log('friend [username]                  -To send a friend request to other users')
             break;
         case 'register':
             if(arr.length == 3)
             {
                 console.log('ready to register~');
-                client.write('R' + ' ' + arr[1] + ' ' + arr[2]);
+                client.write(register + ' ' + arr[1] + ' ' + arr[2]);
             }
             else
             {
@@ -119,7 +131,7 @@ rl.on('line', function(line){
             if(arr.length == 3)
             {
                 console.log('ready to login~');
-                client.write('L' + ' ' + arr[1] + ' ' + arr[2]);
+                client.write(login + ' ' + arr[1] + ' ' + arr[2]);
             }
             else
             {
@@ -129,14 +141,14 @@ rl.on('line', function(line){
             break;
         case 'logout':
             console.log('ready to logout');
-            client.write('O $%^&*()');
+            client.write(logout + '$%^&*()');
             rl.close();
             break;
         case 'send':
             if(arr.length == 3)
             {
                 console.log('ready to send a message~');
-                client.write('M' + ' ' + arr[1] + ' ' + arr[2]);
+                client.write(chat_message + ' ' + arr[1] + ' ' + arr[2]);
             }
             else
             {
@@ -145,10 +157,21 @@ rl.on('line', function(line){
             }
             break;
         case 'check':
-            client.write('A');
+            client.write(ask_friend_list);
             break;
         case 'checkonline':
-            client.write('S');
+            client.write(ask_friend_online);
+            break;
+        case 'friend':
+            if(arr.length == 2)
+            {
+                client.write(friend_request + ' ' + arr[1])
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: friend [username]')
+            }
             break;
         default:
             console.log('没有找到命令！');

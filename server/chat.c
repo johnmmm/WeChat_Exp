@@ -97,18 +97,8 @@ void* handleRequest(int *fd)
                     printf("wat to login\n");
                     printf("username: %s\n", input[1]);
                     printf("password: %s\n", input[2]);
-                    flag = 0;
-                    int user_id = -1;
-                    for(int i = 0; i < USERNUM; i++)
-                    {
-                        if(strcmp(users[i].userName, input[1]) == 0)
-                        {
-                            flag = 1;
-                            user_id = i;
-                            break;
-                        }
-                    }
-                    if(flag == 1)
+                    int user_id = searchUsername(input[1]);
+                    if(user_id >= 0)
                     {
                         if(strcmp(users[user_id].password, input[2]) != 0)
                         {
@@ -132,7 +122,7 @@ void* handleRequest(int *fd)
                             send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                         } 
                     }
-                    else if(flag == 0)
+                    else if(user_id == -1)
                     {
                         printf("no such user!!\n");
                         strcpy(message_to_send, WRONG_USERNAME);
@@ -151,25 +141,15 @@ void* handleRequest(int *fd)
                         send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                         break;
                     }
-                    flag = 0;
-                    int target_user = -1;
-                    for(int i = 0; i < USERNUM; i++)
-                    {
-                        if(strcmp(users[i].userName, input[1]) == 0)
-                        {
-                            flag = 1;
-                            target_user = i;
-                            break;
-                        }
-                    }
-                    if(flag == 0)
+                    int target_user = searchUsername(input[1]);
+                    if(target_user == -1)
                     {
                         printf("target to a fake person!!!\n");
                         strcpy(message_to_send, FAKE_PERSON);
                         send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                         break;
                     }
-                    else if(flag == 1)
+                    else if(target_user >= 0)
                     {
                         if(user_login[target_user] != 1)
                         {
@@ -195,16 +175,21 @@ void* handleRequest(int *fd)
                             send(user_socket[target_user] , message_to_send , sizeof(message_to_send) , 0);
                         }
                     }
-
                     break;
                 case ASK_FRIEND_LIST:
                     printf("want to gain friends list!\n");
+                    target_user = searchUsername(input[1]);
+                    //if(target_user)
                     break;
                 case ASK_FRIEND_ONLINE:
                     printf("want to know friends who are online!!\n");
+
                     break;
                 case FILE_MESSAGE:
-                    printf("want to send a file");
+                    printf("want to send a file\n");
+                    break;
+                case FRIEND_REQUEST:
+                    printf("want to be friends\n");
                     break;
                 case LOGOUT:
                     printf("logout~~ \n");
