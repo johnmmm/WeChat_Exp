@@ -6,7 +6,6 @@ void* handleRequest(int *fd)
     int tmp_fd, ret;
     int who_am_i = -1;
     tmp_fd = *fd;
-    char message_to_send[MAX_DATA_SIZE];
     printf("tmp_fd: %d\n", tmp_fd);
 
     char buf[MAX_LINE];
@@ -18,10 +17,10 @@ void* handleRequest(int *fd)
         memset(message_to_send, 0, MAX_DATA_SIZE);
         int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
         printf("begin %d\n", rece_num);
+
         if(rece_num <= 0)
         {
             fflush(stdout);
-            //close(stdout);
             *fd = -1;
             printf("logout!! \n");
             user_login[who_am_i] = 0;
@@ -36,10 +35,10 @@ void* handleRequest(int *fd)
             char *result = NULL;
             memset(input, 0, 10000);
             result = strtok(buf, delims);
+
             int count = 0;
             while(result != NULL)
             {
-                //input[count] = (char)result;
                 strncpy(input[count], result, 999); 
                 count++;
                 result = strtok(NULL, delims);
@@ -49,7 +48,6 @@ void* handleRequest(int *fd)
             {
                 case REGISTER:
                     printf("wang to regist!\n");
-                    printf("user exist: %s\n", users[0].userName);
                     printf("username: %s\n", input[1]);
                     printf("password: %s\n", input[2]);
                     int flag = 0;
@@ -70,16 +68,14 @@ void* handleRequest(int *fd)
                     if(flag == 1)
                     {
                         printf("username_unavailable\n");
-                        strcpy(message_to_send, USERNAME_UNAVAILABLE);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(USERNAME_UNAVAILABLE, tmp_fd);
                     }
                     else if(flag == 0)
                     {
                         if(new_user == -1)              //full
                         {
                             printf("users full\n");
-                            strcpy(message_to_send, USERS_FULL);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(USERS_FULL, tmp_fd);
                         }
                         else
                         {
@@ -103,14 +99,12 @@ void* handleRequest(int *fd)
                         if(strcmp(users[user_id].password, input[2]) != 0)
                         {
                             printf("password is wrong!!!\n");
-                            strcpy(message_to_send, WRONG_PASSWORD);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(WRONG_PASSWORD, tmp_fd);
                         }
                         else if(user_login[user_id] == 1)
                         {
                             printf("already login\n");
-                            strcpy(message_to_send, ALREADY_LOGIN);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(ALREADY_LOGIN, tmp_fd);
                         }
                         else if(strcmp(users[user_id].password, input[2]) == 0)
                         {
@@ -118,15 +112,13 @@ void* handleRequest(int *fd)
                             who_am_i = user_id;
                             user_login[who_am_i] = 1;
                             user_socket[who_am_i] = tmp_fd; 
-                            strcpy(message_to_send, LOGIN_SUCCESS);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(LOGIN_SUCCESS, tmp_fd);
                         } 
                     }
                     else if(user_id == -1)
                     {
                         printf("no such user!!\n");
-                        strcpy(message_to_send, WRONG_USERNAME);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(WRONG_USERNAME, tmp_fd);
                     }
                     break;
                 case HELP:
@@ -137,25 +129,27 @@ void* handleRequest(int *fd)
                     if(who_am_i == -1)
                     {
                         printf("Not login!!!\n");
-                        strcpy(message_to_send, NOT_LOGIN);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(NOT_LOGIN, tmp_fd);
                         break;
                     }
                     int target_user = searchUsername(input[1]);
                     if(target_user == -1)
                     {
                         printf("target to a fake person!!!\n");
-                        strcpy(message_to_send, FAKE_PERSON);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(FAKE_PERSON, tmp_fd);
                         break;
                     }
                     else if(target_user >= 0)
                     {
-                        if(user_login[target_user] != 1)
+                        if(is_friend(target_user, who_am_i) == 0)
+                        {
+                            printf("target is not your friend!!!\n");
+                            sendAlert(NOT_FRIEND, tmp_fd);
+                        }
+                        else if(user_login[target_user] != 1)
                         {
                             printf("target not online!!!\n");
-                            strcpy(message_to_send, NOT_ONLINE);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(NOT_ONLINE, tmp_fd);
                         }
                         else
                         {
@@ -178,11 +172,9 @@ void* handleRequest(int *fd)
                     break;
                 case ASK_FRIEND_LIST:
                     printf("want to gain friends list!\n");
-                    //if(target_user)
                     break;
                 case ASK_FRIEND_ONLINE:
                     printf("want to know friends who are online!!\n");
-
                     break;
                 case FILE_MESSAGE:
                     printf("want to send a file\n");
@@ -192,18 +184,15 @@ void* handleRequest(int *fd)
                     if(who_am_i == -1)
                     {
                         printf("Not login!!!\n");
-                        strcpy(message_to_send, NOT_LOGIN);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(NOT_LOGIN, tmp_fd);
                         break;
                     }
-                    printf("user right? %s\n", input[1]);
+
                     int friend_id = searchUsername(input[1]);
-                    printf("friend_id: %d\n", friend_id);
                     if(friend_id == -1)
                     {
                         printf("no such user!!!\n");
-                        strcpy(message_to_send, FAKE_PERSON);
-                        send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                        sendAlert(FAKE_PERSON, tmp_fd);
                         break;
                     }
                     else if(friend_id >= 0)
@@ -215,8 +204,7 @@ void* handleRequest(int *fd)
                             printf("not friend.\n");
                             if(user_login[friend_id] == 0)//target is not online
                             {
-                                strcpy(message_to_send, NOT_ONLINE);
-                                send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                                sendAlert(NOT_ONLINE, tmp_fd);
                                 break;
                             }
 
@@ -230,8 +218,6 @@ void* handleRequest(int *fd)
                                     break;
                                 }
                             }
-                            printf("save it: %d\n", flag);
-                            printf("friend name: %s\n", users[friend_id].userName);
                             strcpy(users[user_id].friend_list[flag], users[friend_id].userName);//jia de!!!!
                             printf("finish save it: %s\n", users[user_id].friend_list[flag]);
                             refreshTxt();
@@ -247,8 +233,7 @@ void* handleRequest(int *fd)
                         else if(whether_friend == 1)
                         {
                             printf("already friend.\n");
-                            strcpy(message_to_send, ALREADY_FRIEND);
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            sendAlert(ALREADY_FRIEND, tmp_fd);
                             break;
                         }
                     }

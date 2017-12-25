@@ -31,6 +31,7 @@ client.on('data', function(data) {
     var wrong_username = "E";
     var wrong_password = "P";
     var already_login = "A";
+    var not_friend = "I";
     var already_friend = "L"
     var users_full = "F"
     var not_login = "N"
@@ -56,6 +57,9 @@ client.on('data', function(data) {
             break;
         case already_login[0]:
             console.log('Failed! You have already been online!!!');
+            break;
+        case not_friend[0]:
+            console.log('Failed! This user is not your friend!!!')
             break;
         case already_friend[0]:
             console.log('Failed! This user is already your friend!');

@@ -1,11 +1,5 @@
 #include "config.h"
 
-struct Users
-{
-    char username[32];
-    char password[32];
-};
-
 int main (int argc, char *argv[])
 {
     struct sockaddr_in serverSockaddr,clientSockaddr;   //for addr
@@ -19,7 +13,6 @@ int main (int argc, char *argv[])
     int client_num = 0;                                 //for counting number of client
     int server_sockfd[FD_SETSIZE+1];                    //for saving the sockfds of server
     char client_name[FD_SETSIZE+1][32];                 //for saving names of clients
-    struct Users user;                                  //for recording user's information
     char sendBuf[MAX_DATA_SIZE], receBuf[MAX_DATA_SIZE];//for buffers 
     int on = 1;                                         //???
 
@@ -83,20 +76,16 @@ int main (int argc, char *argv[])
     while(1)
     {
         clientfd = serverfd;
-        //printf("begin to ...\n");
         select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
-        printf("select_num: %d\n", select_num);
-        printf("user 0 : %d, user 1 : %d \n", user_login[0], user_login[1]);
-        //printf("select_num: %d\n", select_num);
+        printf("select_num is %d!!\n", select_num);
         if(select_num == -1)
         {
             perror(" failed to select!!!\n");
-            //exit(1);
             continue;
         }
         else if(select_num == 0)
         {
-            printf("select_num is 0!!\n");
+            //printf("select_num is 0!!\n");
         }
         else
         {
@@ -104,7 +93,6 @@ int main (int argc, char *argv[])
             if(FD_ISSET(sockfd, &clientfd))             //if there is something to 
             {
                 recefd = accept(sockfd, (struct sockaddr*)&clientSockaddr, &sin_size);
-                printf("????\n");
                 if(recefd == -1)                        //accept it
                 {
                     perror(" failed to accept!!!\n");
@@ -151,7 +139,6 @@ int main (int argc, char *argv[])
         int tmp_fd = 0;
         for(int i = 0; i <= max_recefd; i++)
         {
-            //printf("now handle No.%d, socket is %d\n", i, server_sockfd[i]);
             if(server_sockfd[i] < 0)
             {
                 continue;
@@ -160,7 +147,6 @@ int main (int argc, char *argv[])
             printf("can we handle it?\n");
             if(FD_ISSET(tmp_fd, &serverfd))
             {
-                //if??
                 printf("can we create it?\n");
                 if(select_num < 0)
                     break;

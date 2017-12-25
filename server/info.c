@@ -14,8 +14,7 @@ int searchUsername(char username[])
         }
         printf("%d\n", i);
     }
-    return user_id;
-    //if -1 then no such user; else if > 0 then it is the user_id
+    return user_id;//if -1 then no such user; else if > 0 then it is the user_id
 }
 
 int is_friend(int user_id, int target_id)

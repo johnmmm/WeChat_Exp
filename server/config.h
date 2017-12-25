@@ -47,7 +47,7 @@
 #define WRONG_USERNAME "E"
 #define WRONG_PASSWORD "P"
 #define ALREADY_LOGIN "A"               //cannot be login in in another shell
-#define NOT_FRIEND "not_friend"
+#define NOT_FRIEND "I"
 #define ALREADY_FRIEND "L"
 #define USERS_FULL "F"
 #define NOT_LOGIN "N"
@@ -82,6 +82,7 @@ User users[USERNUM];
 ListNode *userlist;              //record the user who are online
 
 //chat.c
+char message_to_send[MAX_DATA_SIZE];
 extern void* handleRequest(int *fd);
 
 //info.c
@@ -89,3 +90,6 @@ extern int searchUsername(char username[]);
 extern int is_friend(int user_id, int target_id);
 extern void readTxt();
 extern void refreshTxt();
+
+//alert.c
+extern void sendAlert(char header[], int target);
