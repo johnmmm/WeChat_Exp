@@ -282,12 +282,6 @@ void* handleRequest(int *fd)
                         if(whether_friend == 0)
                         {
                             printf("not friend.\n");
-                            if(user_login[friend_id] == 0)//target is not online
-                            {
-                                sendAlert(NOT_ONLINE, tmp_fd);
-                                break;
-                            }
-
                             flag = 0;
                             for(int i = 0; i < FRIENDNUM; i++)
                             {
@@ -301,6 +295,27 @@ void* handleRequest(int *fd)
                             strcpy(users[user_id].friend_list[flag], users[friend_id].userName);//jia de!!!!
                             printf("finish save it: %s\n", users[user_id].friend_list[flag]);
                             refreshTxt();
+
+                            //offline save it
+                            if(user_login[friend_id] == 0)//target is not online
+                            {
+                                sendAlert(NOT_ONLINE, tmp_fd);
+                                int mess_place = cache[friend_id].size;
+                                char messa[50];
+                                strcpy(messa, "New_friend:");
+                                for(int i = 0; i < sizeof(messa); i++)
+                                {
+                                    cache[friend_id].message[mess_place++] = messa[i];
+                                }
+                                for(int i = 0; i < sizeof(users[user_id].userName); i++)
+                                {
+                                    cache[friend_id].message[mess_place++] = users[user_id].userName[i];
+                                }
+                                cache[friend_id].message[mess_place++] = 10;
+                                cache[friend_id].size = mess_place;
+                                break;
+                            }
+
                             strcpy(message_to_send, NEW_FRIEND);
                             message_to_send[1] = 32;
                             int place = 2;
