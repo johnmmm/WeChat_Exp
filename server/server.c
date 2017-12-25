@@ -19,6 +19,7 @@ int main (int argc, char *argv[])
     readTxt(username);
     memset(user_login, 0, USERNUM);
     memset(user_socket, 0, USERNUM);
+    memset(cache, 0, sizeof(cache));
 
     if(argc != 2)                                       //command does not have right format
     {

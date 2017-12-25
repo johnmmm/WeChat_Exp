@@ -45,6 +45,7 @@ client.on('data', function(data) {
     var new_friend = 'Q'
     var check_friend = 'H'
     var delete_success = 'D'
+    var cache_message = 'B'
     switch(arr[0][0]){
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
@@ -126,6 +127,15 @@ client.on('data', function(data) {
             break;
         case delete_success[0]:
             console.log('Delete friend success!!!')
+            break;
+        case cache_message[0]:
+            console.log('Login success!!!');
+            who_am_i = tmp_who
+            console.log('Message during your offline:')
+            for(var i = 1; i < arr.length; i++)
+            {
+                console.log(arr[i])
+            }
             break;
         default:
             console.log(arr[0]);

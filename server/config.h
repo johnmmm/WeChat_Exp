@@ -58,6 +58,7 @@
 #define NEW_FRIEND "Q"
 #define CHECK_FRIEND "H"
 #define DELETE_SUCCESS "D"
+#define CACHE_MESSAGE "B"
 
 typedef struct _User                    //To record those users
 {
@@ -66,24 +67,17 @@ typedef struct _User                    //To record those users
     char friend_list[FRIENDNUM][32];    //friend list (maximum is 10)
 }User;
 
-typedef struct _User_Online             //To record the user online
+typedef struct _Cache
 {
-    char userName[32];
-    struct sockaddr_in userAddr;        //ip addr
-    int sockfd;                         //record its sockfd~
-}Users_Online;
-
-typedef struct _ListNode
-{
-    Users_Online user_online;
-    struct _ListNode *next;
-}ListNode;
+    int size;
+    char message[MAX_DATA_SIZE];
+}Cache;
 
 int user_num;
-int user_login[USERNUM];
+int user_login[USERNUM];                //record the user who are online
 int user_socket[USERNUM];
-User users[USERNUM];
-ListNode *userlist;              //record the user who are online
+User users[USERNUM];     
+Cache cache[USERNUM];       
 
 //chat.c
 char message_to_send[MAX_DATA_SIZE];

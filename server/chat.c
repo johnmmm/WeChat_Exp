@@ -113,7 +113,23 @@ void* handleRequest(int *fd)
                             who_am_i = user_id;
                             user_login[who_am_i] = 1;
                             user_socket[who_am_i] = tmp_fd; 
-                            sendAlert(LOGIN_SUCCESS, tmp_fd);
+                            //sendAlert(LOGIN_SUCCESS, tmp_fd);
+                            //send those message when offline
+                            memset(message_to_send, 0, MAX_DATA_SIZE);
+                            strcpy(message_to_send, CACHE_MESSAGE);
+                            int place = 1;
+                            message_to_send[place++] = 32;
+                            message_to_send[place++] = 46;
+                            message_to_send[place++] = 46;
+                            message_to_send[place++] = 46;
+                            message_to_send[place++] = 46;
+                            message_to_send[place++] = 10;
+                            printf("cache: %d\n", cache[who_am_i].size);
+                            for(int i = 0; i < cache[who_am_i].size; i++)
+                            {
+                                message_to_send[place++] = cache[who_am_i].message[i];
+                            }
+                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                         } 
                     }
                     else if(user_id == -1)
@@ -151,6 +167,20 @@ void* handleRequest(int *fd)
                         {
                             printf("target not online!!!\n");
                             sendAlert(NOT_ONLINE, tmp_fd);
+
+                            int mess_place = cache[target_user].size;
+                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
+                            {
+                                cache[target_user].message[mess_place++] = users[who_am_i].userName[i];
+                            }
+                            cache[target_user].message[mess_place++] = 58;
+                            //cache[target_user].message[mess_place++] = 32;
+                            for(int i = 0; i < sizeof(input[2]); i++)
+                            {
+                                cache[target_user].message[mess_place++] = input[2][i];
+                            }
+                            cache[target_user].message[mess_place++] = 10;
+                            cache[target_user].size = mess_place;
                         }
                         else
                         {

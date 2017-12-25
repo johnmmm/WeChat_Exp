@@ -86,10 +86,6 @@ void readTxt()
         }
     }
     printf("finishing reading!!\n");
-    // printf("the first username: %s\n", users[0].userName);
-    // printf("the first password: %s\n", users[0].password);
-    // printf("the first friend: %s\n", users[0].friend_list[0]);
-
     return;
 }
 
@@ -101,10 +97,6 @@ void refreshTxt()
         printf("cannot open the txt file!!!\n");
         return;
     }
-
-    // strcpy(users[0].userName, "John_WJs");
-    // strcpy(users[0].password, "John_WJs");
-    // strcpy(users[0].friend_list[0], "damaoyu");
 
     char buf[bufN];
     char *p = buf;
@@ -140,9 +132,7 @@ void refreshTxt()
             }
         }
     }
-    //printf("data is like this: %s\n", buf);
     fwrite(buf, 1, bufN, stream);
     printf("put data into files\n");
-
     return;
 }
