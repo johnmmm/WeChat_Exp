@@ -25,7 +25,7 @@ int searchUsername(char username[])
 int is_friend(int user_id, int target_id)
 {
     int flag = 0;
-    if(user_id < 0 || target_id < 0)
+    if(user_id < 0 || target_id < 0 || user_id >= USERNUM || target_id >= USERNUM)
     {
         return flag;
     }

@@ -172,6 +172,13 @@ void* handleRequest(int *fd)
                     break;
                 case ASK_FRIEND_LIST:
                     printf("want to gain friends list!\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+
                     strcpy(message_to_send, CHECK_FRIEND);
                     int place = 1;
                     for(int i = 0; i < FRIENDNUM; i++)
@@ -189,9 +196,23 @@ void* handleRequest(int *fd)
                     break;
                 case ASK_FRIEND_ONLINE:
                     printf("want to know friends who are online!!\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+
                     break;
                 case FILE_MESSAGE:
                     printf("want to send a file\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+                    
                     break;
                 case FRIEND_REQUEST:
                     printf("want to be friends\n");
@@ -252,8 +273,54 @@ void* handleRequest(int *fd)
                         }
                     }
                     break;
+                case DELETE_FRIEND:
+                    printf("want to delete a friend!!!\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+
+                    friend_id = searchUsername(input[1]);
+                    if(friend_id == -1)
+                    {
+                        printf("no such user!!!\n");
+                        sendAlert(FAKE_PERSON, tmp_fd);
+                        break;
+                    }
+
+                    int whe_friend = is_friend(who_am_i, friend_id);
+                    if(whe_friend == 0)
+                    {
+                        printf("It is not your friend!!!\n");
+                        sendAlert(NOT_FRIEND, tmp_fd);
+                    }
+                    else if(whe_friend == 1)
+                    {
+                        printf("begin to delete it!!!\n");
+                        int that_id = 0;
+                        char blankchar[32] = {0};
+                        for(int i = 0; i < FRIENDNUM; i++)
+                        {
+                            if(strcmp(users[user_id].friend_list[i], users[friend_id].userName) == 0)
+                            {
+                                memset(users[user_id].friend_list[i], 0, sizeof(users[user_id].friend_list[i]));
+                            }
+                        }
+                        refreshTxt();
+                        sendAlert(DELETE_SUCCESS, tmp_fd);
+                    }
+                    break;
                 case LOGOUT:
                     printf("logout~~ \n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+
                     user_login[who_am_i] = 0;
                     user_socket[who_am_i] = 0;
                     who_am_i = -1;

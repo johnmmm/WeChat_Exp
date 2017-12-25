@@ -39,6 +39,7 @@ client.on('data', function(data) {
     var fake_person = "K"
     var new_friend = 'Q'
     var check_friend = 'H'
+    var delete_success = 'D'
     switch(arr[0][0]){
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
@@ -87,13 +88,13 @@ client.on('data', function(data) {
                 console.log(arr[i])
             }
             break;
+        case delete_success[0]:
+            console.log('Delete friend success!!!')
+            break;
         default:
             console.log(arr[0]);
             break;
     }
-    // 完全关闭连接
-    //client.destroy();
-
 });
 
 //"error"处理
@@ -120,6 +121,7 @@ rl.on('line', function(line){
     var ask_friend_online = 'S'
     var file_message = 'F'
     var friend_request = 'Q'
+    var delete_friend = 'D'
     var logout = 'O'
     var unknown = 'U'
 
@@ -134,6 +136,7 @@ rl.on('line', function(line){
             console.log('check					            —To check all your friends');
             console.log('checkonline					    —To get all your online friends');
             console.log('friend [username]                  -To send a friend request to other users')
+            console.log('dfriend [username]                 -To delete a friend in your list')
             break;
         case 'register':
             if(arr.length == 3)
@@ -191,6 +194,17 @@ rl.on('line', function(line){
             {
                 console.log('Wrong format!');
                 console.log('Please input: friend [username]')
+            }
+            break;
+        case 'dfriend':
+            if(arr.length == 2)
+            {
+                client.write(delete_friend + ' ' + arr[1])
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: dfriend [username]')
             }
             break;
         default:

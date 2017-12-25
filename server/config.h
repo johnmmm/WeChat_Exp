@@ -56,6 +56,7 @@
 #define FAKE_PERSON "K"
 #define NEW_FRIEND "Q"
 #define CHECK_FRIEND "H"
+#define DELETE_SUCCESS "D"
 
 typedef struct _User                    //To record those users
 {
