@@ -5,6 +5,10 @@ var readline = require('readline');
 var HOST = '127.0.0.1';
 var PORT = 7474;
 
+var txturl = '/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/info/'
+var who_am_i = 'no one'
+var tmp_who
+
 //创建readline接口实例
 var rl = readline.createInterface({
     input:process.stdin,
@@ -27,6 +31,7 @@ client.on('data', function(data) {
     var arr = data.toString().split(" ")
     var success = "C"
     var username_unavailable = "U"
+    var register_success = "G"
     var login_success = "S"
     var wrong_username = "E";
     var wrong_password = "P";
@@ -44,12 +49,33 @@ client.on('data', function(data) {
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
             console.log(arr[2])
+            var data = fs.readFileSync(txturl + who_am_i + '.txt');
+
+            var more_text = data.toString()
+            more_text = more_text + who_am_i + ' send to ' + arr[1] + ': ' + arr[2] + '\n'
+
+            fs.writeFile(txturl + who_am_i + '.txt', more_text, function(err) {
+                if (err) {
+                    return console.error(err);
+                }
+            })
             break
         case username_unavailable[0]:
             console.log('This username is not available, please choose another one.');
             break;
+        case register_success[0]:
+            console.log('Register success!!!')
+            who_am_i = tmp_who
+            fs.writeFile(txturl + who_am_i + '.txt', "", function(err) {
+                if(err) {
+                    return console.log(err);
+                }
+                console.log("The file was saved!");
+            });
+            break;
         case login_success[0]:
             console.log('Login success!!!');
+            who_am_i = tmp_who
             break;
         case wrong_username[0]:
             console.log('Wrong username!!!');
@@ -80,6 +106,16 @@ client.on('data', function(data) {
             break;
         case new_friend[0]:
             console.log('User ' + arr[1] + ' want to be your friend!!!')
+            var data = fs.readFileSync(txturl + who_am_i + '.txt');
+
+            var more_text = data.toString()
+            more_text = more_text + 'User ' + arr[1] + ' want to be your friend!!!' + '\n'
+
+            fs.writeFile(txturl + who_am_i + '.txt', more_text, function(err) {
+                if (err) {
+                    return console.error(err);
+                }
+            })
             break;
         case check_friend[0]:
             console.log('Your friend list: ')
@@ -143,6 +179,7 @@ rl.on('line', function(line){
             {
                 console.log('ready to register~');
                 client.write(register + ' ' + arr[1] + ' ' + arr[2]);
+                tmp_who = arr[1]
             }
             else
             {
@@ -155,6 +192,7 @@ rl.on('line', function(line){
             {
                 console.log('ready to login~');
                 client.write(login + ' ' + arr[1] + ' ' + arr[2]);
+                tmp_who = arr[1]
             }
             else
             {
@@ -172,6 +210,17 @@ rl.on('line', function(line){
             {
                 console.log('ready to send a message~');
                 client.write(chat_message + ' ' + arr[1] + ' ' + arr[2]);
+
+                var data = fs.readFileSync(txturl + who_am_i + '.txt');
+
+                var more_text = data.toString()
+                more_text = more_text + who_am_i + ' send to ' + arr[1] + ': ' + arr[2] + '\n'
+
+                fs.writeFile(txturl + who_am_i + '.txt', more_text, function(err) {
+                    if (err) {
+                        return console.error(err);
+                    }
+                })
             }
             else
             {

@@ -85,6 +85,7 @@ void* handleRequest(int *fd)
                             user_socket[who_am_i] = tmp_fd;
                             strcpy(users[new_user].userName, input[1]);
                             strcpy(users[new_user].password, input[2]);
+                            sendAlert(REGISTER_SUCCESS, tmp_fd);
                             refreshTxt();
                         } 
                     }
@@ -157,9 +158,9 @@ void* handleRequest(int *fd)
                             strcpy(message_to_send, SUCCESS);
                             message_to_send[1] = 32;
                             int place = 2;
-                            for(int i = 0; i < sizeof(input[1]); i++)
+                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
                             {
-                                message_to_send[place++] = input[1][i];
+                                message_to_send[place++] = users[who_am_i].userName[i];
                             }
                             message_to_send[place++] = 32;
                             for(int i = 0; i < sizeof(input[2]); i++)

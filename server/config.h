@@ -44,6 +44,7 @@
 #define SUCCESS "C"
 #define FAILED "failed"
 #define USERNAME_UNAVAILABLE "U"
+#define REGISTER_SUCCESS "G"
 #define LOGIN_SUCCESS "S"
 #define WRONG_USERNAME "E"
 #define WRONG_PASSWORD "P"
