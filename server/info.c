@@ -4,6 +4,11 @@
 int searchUsername(char username[])
 {
     int user_id = -1;
+    char zero_name[32] = {0};
+    if(strcmp(zero_name, username) == 0)
+    {
+        return user_id;//fake person
+    }
     for(int i = 0; i < USERNUM; i++)
     {
         if(strcmp(users[i].userName, username) == 0)
@@ -20,6 +25,10 @@ int searchUsername(char username[])
 int is_friend(int user_id, int target_id)
 {
     int flag = 0;
+    if(user_id < 0 || target_id < 0)
+    {
+        return flag;
+    }
     for(int i = 0; i < FRIENDNUM; i++)
     {
         if(strcmp(users[user_id].friend_list[i], users[target_id].userName) == 0)

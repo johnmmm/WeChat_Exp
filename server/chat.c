@@ -172,6 +172,20 @@ void* handleRequest(int *fd)
                     break;
                 case ASK_FRIEND_LIST:
                     printf("want to gain friends list!\n");
+                    strcpy(message_to_send, CHECK_FRIEND);
+                    int place = 1;
+                    for(int i = 0; i < FRIENDNUM; i++)
+                    {
+                        if(is_friend(searchUsername(users[who_am_i].friend_list[i]), who_am_i))
+                        {
+                            message_to_send[place++] = 32;
+                            for(int j = 0; j < sizeof(users[who_am_i].friend_list[i]); j++)
+                            {
+                                message_to_send[place++] = users[who_am_i].friend_list[i][j];
+                            }      
+                        }
+                    }
+                    send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                     break;
                 case ASK_FRIEND_ONLINE:
                     printf("want to know friends who are online!!\n");
@@ -198,7 +212,7 @@ void* handleRequest(int *fd)
                     else if(friend_id >= 0)
                     {
                         printf("find it\n");
-                        int whether_friend = is_friend(who_am_i, friend_id);
+                        int whether_friend = (is_friend(who_am_i, friend_id) && is_friend(friend_id, who_am_i));
                         if(whether_friend == 0)
                         {
                             printf("not friend.\n");

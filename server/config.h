@@ -35,6 +35,7 @@
 #define ASK_FRIEND_ONLINE 'S'
 #define FILE_MESSAGE 'F'
 #define FRIEND_REQUEST 'Q'
+#define DELETE_FRIEND 'D'
 #define LOGOUT 'O'
 #define UNKNOWN 'U'
 
@@ -54,6 +55,7 @@
 #define NOT_ONLINE "O"                  //target person is not online
 #define FAKE_PERSON "K"
 #define NEW_FRIEND "Q"
+#define CHECK_FRIEND "H"
 
 typedef struct _User                    //To record those users
 {

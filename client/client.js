@@ -38,6 +38,7 @@ client.on('data', function(data) {
     var not_online = "O"
     var fake_person = "K"
     var new_friend = 'Q'
+    var check_friend = 'H'
     switch(arr[0][0]){
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
@@ -78,6 +79,13 @@ client.on('data', function(data) {
             break;
         case new_friend[0]:
             console.log('User ' + arr[1] + ' want to be your friend!!!')
+            break;
+        case check_friend[0]:
+            console.log('Your friend list: ')
+            for(var i = 1; i < arr.length; i++)
+            {
+                console.log(arr[i])
+            }
             break;
         default:
             console.log(arr[0]);
