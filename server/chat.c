@@ -203,6 +203,20 @@ void* handleRequest(int *fd)
                         break;
                     }
 
+                    strcpy(message_to_send, CHECK_FRIEND);
+                    place = 1;
+                    for(int i = 0; i < FRIENDNUM; i++)
+                    {
+                        if(is_friend(searchUsername(users[who_am_i].friend_list[i]), who_am_i) && user_login[searchUsername(users[who_am_i].friend_list[i])] == 1)
+                        {
+                            message_to_send[place++] = 32;
+                            for(int j = 0; j < sizeof(users[who_am_i].friend_list[i]); j++)
+                            {
+                                message_to_send[place++] = users[who_am_i].friend_list[i][j];
+                            }      
+                        }
+                    }
+                    send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                     break;
                 case FILE_MESSAGE:
                     printf("want to send a file\n");
