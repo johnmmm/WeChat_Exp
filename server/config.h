@@ -19,7 +19,7 @@
 
 #define SIN_PORT 7474
 #define BACKLOG 40
-#define MAX_DATA_SIZE 40960
+#define MAX_DATA_SIZE 409600
 #define MAX_NUM 40
 #define MAX_LINE  8192
 #define FRIENDNUM 10
@@ -33,9 +33,9 @@
 #define CHAT_MESSAGE 'M'
 #define ASK_FRIEND_LIST 'A'
 #define ASK_FRIEND_ONLINE 'S'
-#define FILE_MESSAGE 'F'
 #define FRIEND_REQUEST 'Q'
 #define DELETE_FRIEND 'D'
+#define FILE_REQUEST 'I'
 #define LOGOUT 'O'
 #define UNKNOWN 'U'
 
@@ -59,6 +59,8 @@
 #define CHECK_FRIEND "H"
 #define DELETE_SUCCESS "D"
 #define CACHE_MESSAGE "B"
+#define FILE_MESSAGE "Z"
+
 
 typedef struct _User                    //To record those users
 {

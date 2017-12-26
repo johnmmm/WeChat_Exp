@@ -1,5 +1,9 @@
 #include "config.h"
 
+int is_file = 0;
+int des_id = 0;
+char buf[MAX_DATA_SIZE];
+
 void* handleRequest(int *fd)
 {
     printf("begin to handle!!\n");
@@ -8,12 +12,14 @@ void* handleRequest(int *fd)
     tmp_fd = *fd;
     printf("tmp_fd: %d\n", tmp_fd);
 
-    char buf[MAX_LINE];
-    memset(buf, 0, MAX_LINE);
+
+    memset(buf, 0, MAX_DATA_SIZE);
     memset(message_to_send, 0, MAX_DATA_SIZE);
+    printf("tmp_fd: %d\n", tmp_fd);
     
     while(1)
     {
+        memset(buf, 0, MAX_DATA_SIZE);
         memset(message_to_send, 0, MAX_DATA_SIZE);
         int rece_num = recv(tmp_fd, buf, sizeof(buf)+1, 0);
         printf("begin %d\n", rece_num);
@@ -35,6 +41,16 @@ void* handleRequest(int *fd)
             char *result = NULL;
             memset(input, 0, 10000);
             result = strtok(buf, delims);
+
+            if(is_file == 1)
+            {
+                char file_mess[MAX_DATA_SIZE];
+                printf("can we send it???\n");
+                strcpy(file_mess, buf);
+                send(user_socket[des_id] , file_mess , sizeof(file_mess) , 0);
+                is_file = 0;
+                continue;
+            }
 
             int count = 0;
             while(result != NULL)
@@ -249,16 +265,6 @@ void* handleRequest(int *fd)
                     }
                     send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
                     break;
-                case FILE_MESSAGE:
-                    printf("want to send a file\n");
-                    if(who_am_i == -1)
-                    {
-                        printf("Not login!!!\n");
-                        sendAlert(NOT_LOGIN, tmp_fd);
-                        break;
-                    }
-                    
-                    break;
                 case FRIEND_REQUEST:
                     printf("want to be friends\n");
                     if(who_am_i == -1)
@@ -370,6 +376,45 @@ void* handleRequest(int *fd)
                         }
                         refreshTxt();
                         sendAlert(DELETE_SUCCESS, tmp_fd);
+                    }
+                    break;
+                case FILE_REQUEST:
+                    printf("want to send a file\n");
+                    if(who_am_i == -1)
+                    {
+                        printf("Not login!!!\n");
+                        sendAlert(NOT_LOGIN, tmp_fd);
+                        break;
+                    }
+
+                    friend_id = searchUsername(input[1]);
+                    if(friend_id == -1)
+                    {
+                        printf("no such user!!!\n");
+                        sendAlert(FAKE_PERSON, tmp_fd);
+                        break;
+                    }
+
+                    whe_friend = (is_friend(who_am_i, friend_id) && is_friend(friend_id, who_am_i));
+                    if(whe_friend == 0)
+                    {
+                        printf("It is not your friend!!!\n");
+                        sendAlert(NOT_FRIEND, tmp_fd);
+                    }
+                    else if(whe_friend == 1)
+                    {
+                        printf("begin to send file~\n");
+                        //sendAlert(FILE_MESSAGE, user_socket[friend_id]);
+                        strcpy(message_to_send, FILE_MESSAGE);
+                        message_to_send[1] = 32;
+                        int place = 2;
+                        for(int i = 0; i < sizeof(input[2]); i++)
+                        {
+                            message_to_send[place++] = input[2][i];
+                        }
+                        send(user_socket[friend_id], message_to_send, sizeof(message_to_send), 0);
+                        is_file = 1;
+                        des_id = friend_id;
                     }
                     break;
                 case LOGOUT:

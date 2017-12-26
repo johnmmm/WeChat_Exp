@@ -6,8 +6,12 @@ var HOST = '127.0.0.1';
 var PORT = 7474;
 
 var txturl = '/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/info/'
+var saveurl = "/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/download/"
 var who_am_i = 'no one'
 var tmp_who
+
+var is_file = 0
+var file_format = "txt"
 
 //创建readline接口实例
 var rl = readline.createInterface({
@@ -27,6 +31,31 @@ client.connect(PORT, HOST, function() {
 // 为客户端添加“data”事件处理函数
 // data是服务器发回的数据
 client.on('data', function(data) {
+    if(is_file == 1)
+    {
+        //receive the file
+        var flag = 1
+        require('crypto').randomBytes(16, function(ex, buf) {  
+            var token = buf.toString('hex');  
+            flag = token
+        });  
+        console.log(flag);  
+        console.log("save?")
+        console.log(data)
+        console.log("an?")
+        console.log(saveurl + flag.toString() + '.' + file_format)
+        console.log(typeof data)
+        //saveurl + flag.toString() + "." + file_format.toString()
+        var urls = "/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/download/" + "1."+ "txt"
+        fs.writeFile(urls, data, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            console.log("The file was saved!");
+        });
+        is_file = 0
+    }
+
     //var backdata = data.trim()
     var arr = data.toString().split(" ")
     var success = "C"
@@ -46,6 +75,7 @@ client.on('data', function(data) {
     var check_friend = 'H'
     var delete_success = 'D'
     var cache_message = 'B'
+    var file_message = 'Z'
     switch(arr[0][0]){
         case success[0]:
             console.log('User: ' + arr[1] + ' send you a message: ')
@@ -137,6 +167,11 @@ client.on('data', function(data) {
                 console.log(arr[i])
             }
             break;
+        case file_message[0]:
+            console.log('Somebody want to send you a file~')
+            is_file = 1
+            file_format = arr[1]
+            break;
         default:
             console.log(arr[0]);
             break;
@@ -165,9 +200,9 @@ rl.on('line', function(line){
     var chat_message = 'M'
     var ask_friend_list = 'A'
     var ask_friend_online = 'S'
-    var file_message = 'F'
     var friend_request = 'Q'
     var delete_friend = 'D'
+    var file_request = 'I'
     var logout = 'O'
     var unknown = 'U'
 
@@ -183,6 +218,7 @@ rl.on('line', function(line){
             console.log('checkonline					    —To get all your online friends');
             console.log('friend [username]                  -To send a friend request to other users')
             console.log('dfriend [username]                 -To delete a friend in your list')
+            console.log('file [username] [fileurl]          -To make a file sending request')
             break;
         case 'register':
             if(arr.length == 3)
@@ -264,6 +300,30 @@ rl.on('line', function(line){
             {
                 console.log('Wrong format!');
                 console.log('Please input: dfriend [username]')
+            }
+            break;
+        case 'file':
+            if(arr.length == 3)
+            { 
+                fs.exists(arr[2], function(exists) {  
+                    if(exists)
+                    {
+                        var data = fs.readFileSync(arr[2]);
+                        var fileurls = arr[2].split('.')
+                        client.write(file_request + ' ' + arr[1] + ' ' + fileurls[1])
+
+                        client.write(data)
+                    }
+                    else
+                    {
+                        console.log('File not found!!!')
+                    }
+                });
+            }
+            else
+            {
+                console.log('Wrong format!');
+                console.log('Please input: file [username] [fileurl]');
             }
             break;
         default:
