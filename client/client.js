@@ -13,6 +13,13 @@ var tmp_who
 var is_file = 0
 var file_format = "txt"
 
+var flag = 1
+require('crypto').randomBytes(16, function(ex, buf) {  
+    var token = buf.toString('hex');  
+    flag = token
+});  
+console.log(flag); 
+
 //创建readline接口实例
 var rl = readline.createInterface({
     input:process.stdin,
@@ -34,12 +41,7 @@ client.on('data', function(data) {
     if(is_file == 1)
     {
         //receive the file
-        var flag = 1
-        // require('crypto').randomBytesSync(16, function(ex, buf) {  
-        //     var token = buf.toString('hex');  
-        //     flag = token
-        // });  
-        // console.log(flag);  
+ 
         console.log("save?")
         console.log(data)
         console.log("an?")
@@ -209,13 +211,13 @@ rl.on('line', function(line){
     switch(arr[0]) {
         case 'help':
             console.log('help: you can ... ');
-            console.log('register [username] [password]     -To register')
-            console.log('login [username] [password] 		—To login');
-            console.log('logout           				    —To log out');
-            console.log('send [send_to_username] [content] 	—To send a message to a friend');
-            console.log('help						        —To help');
-            console.log('check					            —To check all your friends');
-            console.log('checkonline					    —To get all your online friends');
+            console.log('register [username] [password]     —To register')
+            console.log('login [username] [password]        —To login');
+            console.log('logout                             —To log out');
+            console.log('send [send_to_username] [content]  —To send a message to a friend');
+            console.log('help                               —To help');
+            console.log('check                              —To check all your friends');
+            console.log('checkonline                        —To get all your online friends');
             console.log('friend [username]                  -To send a friend request to other users')
             console.log('dfriend [username]                 -To delete a friend in your list')
             console.log('file [username] [fileurl]          -To make a file sending request')
