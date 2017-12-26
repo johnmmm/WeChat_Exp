@@ -35,19 +35,25 @@ client.on('data', function(data) {
     {
         //receive the file
         var flag = 1
-        require('crypto').randomBytes(16, function(ex, buf) {  
-            var token = buf.toString('hex');  
-            flag = token
-        });  
-        console.log(flag);  
+        // require('crypto').randomBytesSync(16, function(ex, buf) {  
+        //     var token = buf.toString('hex');  
+        //     flag = token
+        // });  
+        // console.log(flag);  
         console.log("save?")
         console.log(data)
         console.log("an?")
         console.log(saveurl + flag.toString() + '.' + file_format)
-        console.log(typeof data)
         //saveurl + flag.toString() + "." + file_format.toString()
-        var urls = "/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/download/" + "1."+ "txt"
-        fs.writeFile(urls, data, function(err) {
+        var urls = "./download/" + "1.txt"
+        console.log(file_format.length)
+        // for (var i = 0; i < file_format.length; i++)
+        // {
+        //     console.log()
+        //     urls += file_format[i]
+        // }
+        console.log(urls)
+        fs.writeFile(urls, data.toString(), function(err) {
             if(err) {
                 return console.log(err);
             }
@@ -310,8 +316,13 @@ rl.on('line', function(line){
                     {
                         var data = fs.readFileSync(arr[2]);
                         var fileurls = arr[2].split('.')
-                        client.write(file_request + ' ' + arr[1] + ' ' + fileurls[1])
-
+                        client.write(file_request + ' ' + arr[1] + ' ' + fileurls[fileurls.length-1])
+                        console.log(file_request + ' ' + arr[1] + ' ' + fileurls[fileurls.length-1])
+                        var count = 0
+                        for(var i = 0; i < 100000; i++)
+                        {
+                            count++
+                        }
                         client.write(data)
                     }
                     else
