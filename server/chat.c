@@ -147,6 +147,7 @@ void* handleRequest(int *fd)
                                 message_to_send[place++] = cache[who_am_i].message[i];
                             }
                             send(tmp_fd , message_to_send , strlen(message_to_send) , 0);
+                            memset(cache, 0, sizeof(cache));
                         } 
                     }
                     else if(user_id == -1)

@@ -315,9 +315,14 @@ rl.on('line', function(line){
                         client.write(file_request + ' ' + arr[1] + ' ' + fileurls[fileurls.length-1])
                         console.log(file_request + ' ' + arr[1] + ' ' + fileurls[fileurls.length-1])
                         var count = 0
-                        for(var i = 0; i < 100000; i++)
+                        for(var i = 0; i < 1000000; i++)
                         {
                             count++
+                        }
+                        var datas
+                        for(var i = 0; i < data.length; i++)
+                        {
+                            console.log(data[i])
                         }
                         client.write(data)
                     }
