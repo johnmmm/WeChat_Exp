@@ -5,8 +5,8 @@ var readline = require('readline');
 var HOST = '127.0.0.1';
 var PORT = 7474;
 
-var txturl = '/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/info/'
-var saveurl = "/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/client/download/"
+var txturl = './info/'
+var saveurl = "./download/"
 var who_am_i = 'no one'
 var tmp_who
 

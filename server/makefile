@@ -1,5 +1,5 @@
 server: server.o chat.o info.o alert.o
-	gcc -o server server.o chat.o info.o alert.o
+	gcc -o server server.o chat.o info.o alert.o -lpthread
 server.o: config.h server.c
 	gcc -c server.c
 chat.o: config.h chat.c

@@ -15,7 +15,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#define FILE_URL "/Users/mac/Desktop/programme/program/1718Autumn/WeChat_Exp/server/users/info.txt"
+#define FILE_URL "./info.txt"
 
 #define SIN_PORT 7474
 #define BACKLOG 40

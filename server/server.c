@@ -78,7 +78,7 @@ int main (int argc, char *argv[])
     {
         clientfd = serverfd;
         select_num = select(max_sockfd+1, &clientfd, NULL, NULL, &timeout);
-        printf("select_num is %d!!\n", select_num);
+        //printf("select_num is %d!!\n", select_num);
         if(select_num == -1)
         {
             perror(" failed to select!!!\n");
@@ -87,6 +87,7 @@ int main (int argc, char *argv[])
         else if(select_num == 0)
         {
             //printf("select_num is 0!!\n");
+            continue;
         }
         else
         {
@@ -129,7 +130,7 @@ int main (int argc, char *argv[])
                     max_recefd = i;
                 printf("finish refreshing!!!\n");
                 printf("the select num is %d\n", select_num);
-                if(--select_num <= 0)
+                if(select_num <= 0)
                     continue;
                 //maybe there is a problem about select_num
                 //cannot understand function select very well now..
@@ -151,7 +152,9 @@ int main (int argc, char *argv[])
                 printf("can we create it?\n");
                 if(select_num < 0)
                     break;
+                printf("tmp_fd wai: %d\n", tmp_fd);
                 pthread_create(&client_thread, NULL, (void *)handleRequest, (void*)&tmp_fd);
+                printf("tmp_fd wai: %d\n", tmp_fd);
                 FD_CLR(tmp_fd, &serverfd);
                 server_sockfd[i] = -1;
             }

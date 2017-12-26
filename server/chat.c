@@ -325,9 +325,9 @@ void* handleRequest(int *fd)
                             strcpy(message_to_send, NEW_FRIEND);
                             message_to_send[1] = 32;
                             int place = 2;
-                            for(int i = 0; i < sizeof(input[1]); i++)
+                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
                             {
-                                message_to_send[place++] = input[1][i];
+                                message_to_send[place++] = users[who_am_i].userName[i];
                             }
                             send(user_socket[friend_id] , message_to_send , sizeof(message_to_send) , 0);
                         }
