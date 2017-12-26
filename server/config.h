@@ -93,3 +93,4 @@ extern void refreshTxt();
 
 //alert.c
 extern void sendAlert(char header[], int target);
+extern void sendIt(int target, int size);

@@ -47,7 +47,8 @@ void* handleRequest(int *fd)
                 char file_mess[MAX_DATA_SIZE];
                 printf("can we send it???\n");
                 strcpy(file_mess, buf);
-                send(user_socket[des_id] , file_mess , sizeof(file_mess) , 0);
+                send(user_socket[des_id] , file_mess , strlen(file_mess) , 0);
+                //sendIt(user_socket[des_id], strlen(buf));
                 is_file = 0;
                 continue;
             }
@@ -145,7 +146,7 @@ void* handleRequest(int *fd)
                             {
                                 message_to_send[place++] = cache[who_am_i].message[i];
                             }
-                            send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                            send(tmp_fd , message_to_send , strlen(message_to_send) , 0);
                         } 
                     }
                     else if(user_id == -1)
@@ -185,13 +186,13 @@ void* handleRequest(int *fd)
                             sendAlert(NOT_ONLINE, tmp_fd);
 
                             int mess_place = cache[target_user].size;
-                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
+                            for(int i = 0; i < strlen(users[who_am_i].userName); i++)
                             {
                                 cache[target_user].message[mess_place++] = users[who_am_i].userName[i];
                             }
                             cache[target_user].message[mess_place++] = 58;
                             //cache[target_user].message[mess_place++] = 32;
-                            for(int i = 0; i < sizeof(input[2]); i++)
+                            for(int i = 0; i < strlen(input[2]); i++)
                             {
                                 cache[target_user].message[mess_place++] = input[2][i];
                             }
@@ -204,16 +205,16 @@ void* handleRequest(int *fd)
                             strcpy(message_to_send, SUCCESS);
                             message_to_send[1] = 32;
                             int place = 2;
-                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
+                            for(int i = 0; i < strlen(users[who_am_i].userName); i++)
                             {
                                 message_to_send[place++] = users[who_am_i].userName[i];
                             }
                             message_to_send[place++] = 32;
-                            for(int i = 0; i < sizeof(input[2]); i++)
+                            for(int i = 0; i < strlen(input[2]); i++)
                             {
                                 message_to_send[place++] = input[2][i];
                             }
-                            send(user_socket[target_user], message_to_send, sizeof(message_to_send), 0);
+                            send(user_socket[target_user], message_to_send, strlen(message_to_send), 0);
                         }
                     }
                     break;
@@ -233,13 +234,13 @@ void* handleRequest(int *fd)
                         if(is_friend(searchUsername(users[who_am_i].friend_list[i]), who_am_i))
                         {
                             message_to_send[place++] = 32;
-                            for(int j = 0; j < sizeof(users[who_am_i].friend_list[i]); j++)
+                            for(int j = 0; j < strlen(users[who_am_i].friend_list[i]); j++)
                             {
                                 message_to_send[place++] = users[who_am_i].friend_list[i][j];
                             }      
                         }
                     }
-                    send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                    send(tmp_fd , message_to_send , strlen(message_to_send) , 0);
                     break;
                 case ASK_FRIEND_ONLINE:
                     printf("want to know friends who are online!!\n");
@@ -257,13 +258,13 @@ void* handleRequest(int *fd)
                         if(is_friend(searchUsername(users[who_am_i].friend_list[i]), who_am_i) && user_login[searchUsername(users[who_am_i].friend_list[i])] == 1)
                         {
                             message_to_send[place++] = 32;
-                            for(int j = 0; j < sizeof(users[who_am_i].friend_list[i]); j++)
+                            for(int j = 0; j < strlen(users[who_am_i].friend_list[i]); j++)
                             {
                                 message_to_send[place++] = users[who_am_i].friend_list[i][j];
                             }      
                         }
                     }
-                    send(tmp_fd , message_to_send , sizeof(message_to_send) , 0);
+                    send(tmp_fd , message_to_send , strlen(message_to_send) , 0);
                     break;
                 case FRIEND_REQUEST:
                     printf("want to be friends\n");
@@ -309,11 +310,11 @@ void* handleRequest(int *fd)
                                 int mess_place = cache[friend_id].size;
                                 char messa[50];
                                 strcpy(messa, "New_friend:");
-                                for(int i = 0; i < sizeof(messa); i++)
+                                for(int i = 0; i < strlen(messa); i++)
                                 {
                                     cache[friend_id].message[mess_place++] = messa[i];
                                 }
-                                for(int i = 0; i < sizeof(users[user_id].userName); i++)
+                                for(int i = 0; i < strlen(users[user_id].userName); i++)
                                 {
                                     cache[friend_id].message[mess_place++] = users[user_id].userName[i];
                                 }
@@ -325,11 +326,11 @@ void* handleRequest(int *fd)
                             strcpy(message_to_send, NEW_FRIEND);
                             message_to_send[1] = 32;
                             int place = 2;
-                            for(int i = 0; i < sizeof(users[who_am_i].userName); i++)
+                            for(int i = 0; i < strlen(users[who_am_i].userName); i++)
                             {
                                 message_to_send[place++] = users[who_am_i].userName[i];
                             }
-                            send(user_socket[friend_id] , message_to_send , sizeof(message_to_send) , 0);
+                            send(user_socket[friend_id] , message_to_send , strlen(message_to_send) , 0);
                         }
                         else if(whether_friend == 1)
                         {
@@ -408,11 +409,11 @@ void* handleRequest(int *fd)
                         strcpy(message_to_send, FILE_MESSAGE);
                         message_to_send[1] = 32;
                         int place = 2;
-                        for(int i = 0; i < sizeof(input[2]); i++)
+                        for(int i = 0; i < strlen(input[2]); i++)
                         {
                             message_to_send[place++] = input[2][i];
                         }
-                        send(user_socket[friend_id], message_to_send, sizeof(message_to_send), 0);
+                        send(user_socket[friend_id], message_to_send, place, 0);
                         is_file = 1;
                         des_id = friend_id;
                     }

@@ -44,14 +44,8 @@ client.on('data', function(data) {
         console.log(data)
         console.log("an?")
         console.log(saveurl + flag.toString() + '.' + file_format)
-        //saveurl + flag.toString() + "." + file_format.toString()
-        var urls = "./download/" + "1.txt"
+        var urls = "./download/" + "1." + file_format
         console.log(file_format.length)
-        // for (var i = 0; i < file_format.length; i++)
-        // {
-        //     console.log()
-        //     urls += file_format[i]
-        // }
         console.log(urls)
         fs.writeFile(urls, data.toString(), function(err) {
             if(err) {
