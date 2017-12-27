@@ -293,15 +293,15 @@ void* handleRequest(int *fd)
                             flag = 0;
                             for(int i = 0; i < FRIENDNUM; i++)
                             {
-                                printf("user: %s\n", users[user_id].friend_list[i]);
-                                if(users[user_id].friend_list[i][0] == 0)
+                                printf("user: %s\n", users[who_am_i].friend_list[i]);
+                                if(users[who_am_i].friend_list[i][0] == 0)
                                 {
                                     flag = i;
                                     break;
                                 }
                             }
-                            strcpy(users[user_id].friend_list[flag], users[friend_id].userName);//jia de!!!!
-                            printf("finish save it: %s\n", users[user_id].friend_list[flag]);
+                            strcpy(users[who_am_i].friend_list[flag], users[friend_id].userName);//jia de!!!!
+                            printf("finish save it: %s\n", users[who_am_i].friend_list[flag]);
                             refreshTxt();
 
                             //offline save it

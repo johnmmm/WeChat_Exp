@@ -46,7 +46,7 @@ client.on('data', function(data) {
         console.log(data)
         console.log("an?")
         console.log(saveurl + flag.toString() + '.' + file_format)
-        var urls = "./download/" + "1." + file_format
+        var urls = "./download/" + flag.toString() + '.' + file_format
         console.log(file_format.length)
         console.log(urls)
         fs.writeFile(urls, data.toString(), function(err) {
@@ -318,11 +318,6 @@ rl.on('line', function(line){
                         for(var i = 0; i < 1000000; i++)
                         {
                             count++
-                        }
-                        var datas
-                        for(var i = 0; i < data.length; i++)
-                        {
-                            console.log(data[i])
                         }
                         client.write(data)
                     }

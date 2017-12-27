@@ -13,11 +13,10 @@ int searchUsername(char username[])
     {
         if(strcmp(users[i].userName, username) == 0)
         {
-            printf("in: %d\n", i);
+            //printf("in: %d\n", i);
             user_id = i;
             break;
         }
-        printf("%d\n", i);
     }
     return user_id;//if -1 then no such user; else if > 0 then it is the user_id
 }
